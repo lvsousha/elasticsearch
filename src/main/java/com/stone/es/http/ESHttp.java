@@ -12,7 +12,7 @@ public class ESHttp {
 	
 	public void getIndices(){
 		String result = HttpClientUtil.get("http://localhost:9200/_cat/indices?v");
-//		log.info(result);
+		log.info(result);
 		System.out.println(result);
 	}
 	

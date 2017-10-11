@@ -1,8 +1,5 @@
 package com.stone.es;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Mapping {
 	
 	private String type = "string";		//字段类型

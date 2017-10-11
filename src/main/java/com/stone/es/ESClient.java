@@ -1,31 +1,26 @@
 package com.stone.es;
 
 import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Date;
 
-import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
 
 public class ESClient {
 
 	public static void main(String[] args) throws Exception {
 		Client client = ESClient.createClientBySetting();
 		
-		XContentBuilder  builder  =  XContentFactory.jsonBuilder()
-		        .startObject()
-		                .field("user",  "kimchy")
-		                .field("postDate",  new  Date())
-		                .field("message",  "trying  out  Elasticsearch")
-		        .endObject();
-		IndexResponse  response  =  client.prepareIndex("twitter",  "tweet")
-                .setSource(builder.string())
-                .get();
+//		XContentBuilder  builder  =  XContentFactory.jsonBuilder()
+//		        .startObject()
+//		                .field("user",  "kimchy")
+//		                .field("postDate",  new  Date())
+//		                .field("message",  "trying  out  Elasticsearch")
+//		        .endObject();
+//		IndexResponse  response  =  client.prepareIndex("twitter",  "tweet")
+//                .setSource(builder.string())
+//                .get();
 		client.close();
 		
 	}

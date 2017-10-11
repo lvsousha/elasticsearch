@@ -1,7 +1,5 @@
 package com.stone.es;
 
-import java.net.UnknownHostException;
-
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.search.SearchType;
