@@ -37,7 +37,7 @@ public class ESClient {
 		return client;
 	}
 	
-	public static Client createClientBySetting() throws UnknownHostException{
+	public static Client createClientBySetting() throws Exception{
 		Settings settings  =  Settings.settingsBuilder()
                 					.put("cluster.name",  "yp-zcl-app")
                 					.put("node.name",  "yp-zcl-node-1")
