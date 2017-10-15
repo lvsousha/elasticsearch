@@ -44,7 +44,7 @@ public class ESClient {
 		Client client  =  TransportClient.builder()
 										.settings(settings)
 										.build()
-										.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("127.0.0.1"), 9300));
+										.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("39.106.37.249"), 9300));
 		return client;
 	}
 }
