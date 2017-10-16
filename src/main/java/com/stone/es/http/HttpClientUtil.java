@@ -5,6 +5,7 @@ import java.io.IOException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.entity.EntityBuilder;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -77,6 +78,44 @@ public class HttpClientUtil {
             HttpGet httpget = new HttpGet(url);  
   
             CloseableHttpResponse response = httpclient.execute(httpget);  
+            try {  
+                log.info(response.getStatusLine());  
+                HttpEntity repEntity = response.getEntity();  
+                if (repEntity != null) {  
+                	result = EntityUtils.toString(repEntity);
+                }
+                EntityUtils.consume(repEntity);  
+            } finally {  
+                response.close();  
+            }  
+        } catch (ClientProtocolException e) {  
+            e.printStackTrace();  
+        } catch (IOException e) {  
+            e.printStackTrace();  
+        } finally {  
+            try {  
+                httpclient.close();  
+            } catch (IOException e) {  
+                e.printStackTrace();  
+            }  
+        }  
+        return result;
+    }
+	
+	public static String post(String url, String param){  
+        CloseableHttpClient httpclient = HttpClients.createDefault();  
+        String result = "";
+        try {  
+            HttpPost httpPost = new HttpPost(url);  
+            
+//            StringBody comment = new StringBody(param, ContentType.TEXT_PLAIN); 
+            
+//            HttpEntity reqEntity = MultipartEntityBuilder.create().addTextBody("comment", param).build();
+            HttpEntity entity = EntityBuilder.create().setText(param).build();
+            
+            httpPost.setEntity(entity);
+  
+            CloseableHttpResponse response = httpclient.execute(httpPost);  
             try {  
                 log.info(response.getStatusLine());  
                 HttpEntity repEntity = response.getEntity();  
