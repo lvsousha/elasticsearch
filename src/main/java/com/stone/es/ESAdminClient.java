@@ -2,7 +2,6 @@ package com.stone.es;
 
 import java.io.IOException;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -22,6 +21,7 @@ import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import org.elasticsearch.common.xcontent.XContentFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -42,8 +42,9 @@ public class ESAdminClient {
 		Client client = ESClient.createClientBySetting();
 		
 //		esdc.getHealth(client);
-		esdc.getIndices(client);
+//		esdc.getIndices(client);
 //		esdc.createIndex(client);
+		esdc.createMappings("test");
 		
 
 		client.close();
@@ -89,7 +90,7 @@ public class ESAdminClient {
 		return result;
 	}
 	
-	public JSONObject createIndex(Client client){
+	public JSONObject createIndex(Client client) throws IOException{
 		JSONObject result = new JSONObject();
 		IndicesAdminClient indicesAdminClient = client.admin().indices();
 		CreateIndexResponse response = indicesAdminClient.prepareCreate("yuhuan")  
@@ -105,7 +106,35 @@ public class ESAdminClient {
 		return result;
 	}
 	
+	public XContentBuilder createMappingsByXCB(String typeName) throws IOException{
+		XContentBuilder  builder  =  XContentFactory.jsonBuilder().startObject()
+				.startObject(typeName)
+					.startObject("properties")
+						.startObject("name")
+							.field("type", "string")
+							.field("index", "analyzed")
+						.endObject()
+						.startObject("sex")
+							.field("type", "string")
+							.field("index", "analyzed")
+						.endObject()
+						.startObject("birth")
+							.field("type", "date")
+							.field("index", "analyzed")
+							.field("format", "strict_date_optional_time||epoch_millis")
+						.endObject()
+						.startObject("year")
+							.field("type", "string")
+							.field("index", "analyzed")
+						.endObject()
+					.endObject()
+				.endObject().endObject();
+		log.info(builder.string());
+		return builder;
+	}
+	
 	public JSONObject createMappings(String typeName){
+		
 		JSONObject result = new JSONObject();
 		JSONObject type = new JSONObject();
 		JSONObject properties = new JSONObject();
