@@ -42,65 +42,78 @@ public class ESAdminClient {
 		Client client = ESClient.createClientBySetting();
 		
 //		esdc.getHealth(client);
-//		esdc.getIndices(client);
+		esdc.getIndices(client);
 //		esdc.createIndex(client);
-		esdc.createMappings("test");
+//		esdc.createMappings("test");
 		
 
 		client.close();
 	}
 	
-	public JSONObject getIndices(Client client) throws IOException{
-		JSONObject result = new JSONObject();
+	public JSONArray getIndices(Client client) throws IOException{
 		IndicesAdminClient iac = client.admin().indices();
 		GetIndexResponse response = iac.prepareGetIndex().get();
 		String[] indices = response.getIndices();
+		JSONArray array = new JSONArray();
 		for(String index : indices){
+			JSONObject object = new JSONObject();
+			object.put("index", index);
 			log.info("索引名："+index);
 			IndicesStatsResponse isr = iac.prepareStats(index).get();
 			CommonStats cs = isr.getTotal();
 //			log.info(isr.toString());
+			object.put("docs", cs.getDocs().getCount());
+			object.put("size", cs.getStore().getSize().getMb()+"mb");
 			log.info("文件数量："+cs.getDocs().getCount());
 			log.info("占用空间:"+cs.getStore().getSize().getMb()+"mb");
 			
 			GetMappingsResponse gmr = iac.prepareGetMappings(index).get();
 			Iterator<ObjectObjectCursor<String, ImmutableOpenMap<String, MappingMetaData>>> ioocip = gmr.mappings().iterator();
 			while(ioocip.hasNext()){
+				JSONObject mappings = new JSONObject();
 				ObjectObjectCursor<String, ImmutableOpenMap<String, MappingMetaData>> oocim = ioocip.next();
 				Iterator<ObjectObjectCursor<String, MappingMetaData>> ioocm = oocim.value.iterator();
 				while(ioocm.hasNext()){
 					ObjectObjectCursor<String, MappingMetaData> oocm = ioocm.next();
 					MappingMetaData mmd = oocm.value.get();
+					mappings.put(oocm.key, mmd.source().string());
 					log.info("映射:"+mmd.source().string());
+					
 				}
+				object.put("mappings", mappings);
 			}
 			
 			GetSettingsResponse gsr = iac.prepareGetSettings(index).get();
 			
 			Iterator<ObjectObjectCursor<String, Settings>>  ioocs = gsr.getIndexToSettings().iterator();
 			while(ioocs.hasNext()){
+				JSONObject settings = new JSONObject();
 				ObjectObjectCursor<String, Settings> oocs = ioocs.next();
+				settings.put(oocs.key, oocs.value.getAsMap());
 				log.info(JSON.toJSON("配置:"+oocs.key+"："+oocs.value.getAsMap()));
+				object.put("settings", settings);
 			}
+			array.add(object);
 		}
 		Set<String> headers = response.getHeaders();
 		for(String header : headers){
 			log.info(header);
 		}
-		return result;
+		log.info(array);
+		return array;
 	}
 	
-	public JSONObject createIndex(Client client) throws IOException{
+	public JSONObject createIndex(Client client, String index, String type, String mappings) throws IOException{
 		JSONObject result = new JSONObject();
 		IndicesAdminClient indicesAdminClient = client.admin().indices();
-		CreateIndexResponse response = indicesAdminClient.prepareCreate("yuhuan")  
+		CreateIndexResponse response = indicesAdminClient.prepareCreate(index)  
 				        				  .setSettings(
 				        						  Settings.builder()                             
 				        						  			.put("index.number_of_shards", 5)    
 				        						  			.put("index.number_of_replicas", 1)
 				        				  
 				        				  )
-				        				  .addMapping("yanpan", createMappings("yanpan"))
+				        				  .addMapping(type, mappings)
 				        				  .get();
 		log.info(response.isAcknowledged());
 		return result;
