@@ -1,18 +1,27 @@
 package com.stone.es;
 
+import java.io.IOException;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
+import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse;
+import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
+import org.elasticsearch.action.admin.indices.stats.CommonStats;
+import org.elasticsearch.action.admin.indices.stats.IndicesStatsResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.client.IndicesAdminClient;
 import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.cluster.health.ClusterIndexHealth;
+import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.xcontent.XContentBuilder;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -33,11 +42,51 @@ public class ESAdminClient {
 		Client client = ESClient.createClientBySetting();
 		
 //		esdc.getHealth(client);
-//		esdc.getIndices(client);
-		esdc.createIndex(client);
+		esdc.getIndices(client);
+//		esdc.createIndex(client);
 		
 
 		client.close();
+	}
+	
+	public JSONObject getIndices(Client client) throws IOException{
+		JSONObject result = new JSONObject();
+		IndicesAdminClient iac = client.admin().indices();
+		GetIndexResponse response = iac.prepareGetIndex().get();
+		String[] indices = response.getIndices();
+		for(String index : indices){
+			log.info("索引名："+index);
+			IndicesStatsResponse isr = iac.prepareStats(index).get();
+			CommonStats cs = isr.getTotal();
+//			log.info(isr.toString());
+			log.info("文件数量："+cs.getDocs().getCount());
+			log.info("占用空间:"+cs.getStore().getSize().getMb()+"mb");
+			
+			GetMappingsResponse gmr = iac.prepareGetMappings(index).get();
+			Iterator<ObjectObjectCursor<String, ImmutableOpenMap<String, MappingMetaData>>> ioocip = gmr.mappings().iterator();
+			while(ioocip.hasNext()){
+				ObjectObjectCursor<String, ImmutableOpenMap<String, MappingMetaData>> oocim = ioocip.next();
+				Iterator<ObjectObjectCursor<String, MappingMetaData>> ioocm = oocim.value.iterator();
+				while(ioocm.hasNext()){
+					ObjectObjectCursor<String, MappingMetaData> oocm = ioocm.next();
+					MappingMetaData mmd = oocm.value.get();
+					log.info("映射:"+mmd.source().string());
+				}
+			}
+			
+			GetSettingsResponse gsr = iac.prepareGetSettings(index).get();
+			
+			Iterator<ObjectObjectCursor<String, Settings>>  ioocs = gsr.getIndexToSettings().iterator();
+			while(ioocs.hasNext()){
+				ObjectObjectCursor<String, Settings> oocs = ioocs.next();
+				log.info(JSON.toJSON("配置:"+oocs.key+"："+oocs.value.getAsMap()));
+			}
+		}
+		Set<String> headers = response.getHeaders();
+		for(String header : headers){
+			log.info(header);
+		}
+		return result;
 	}
 	
 	public JSONObject createIndex(Client client){
@@ -83,18 +132,6 @@ public class ESAdminClient {
 		result.put(typeName, type);
 		return result;
 		
-	}
-	
-	public JSONObject getIndices(Client client){
-		JSONObject result = new JSONObject();
-		IndicesAdminClient indicesAdminClient = client.admin().indices();
-		GetIndexResponse response = indicesAdminClient.prepareGetIndex().get();
-		ImmutableOpenMap<Object, Object> iom = response.getContext();
-		Iterator<ObjectObjectCursor<Object, Object>> iterator = iom.iterator();
-		while(iterator.hasNext()){
-			log.info(iterator.next().key);
-		}
-		return result;
 	}
 
 	public JSONObject getHealth(Client client) {
