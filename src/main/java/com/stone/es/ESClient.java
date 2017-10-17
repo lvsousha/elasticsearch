@@ -7,8 +7,10 @@ import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
 
-public class ESClient {
+import com.stone.utils.PropertiesUtils;
 
+public class ESClient {
+	
 	public static void main(String[] args) throws Exception {
 		Client client = ESClient.createClientBySetting();
 		
@@ -33,9 +35,12 @@ public class ESClient {
 	}
 	
 	public static Client createClientBySetting() throws Exception{
+		String clusterName = PropertiesUtils.getString("cluster.name");
+		String nodeNamee = PropertiesUtils.getString("node.name");
+		String url = PropertiesUtils.getString("es.url");
 		Settings settings  =  Settings.settingsBuilder()
-                					.put("cluster.name",  "yp-zcl-app")
-                					.put("node.name",  "yp-zcl-node-1")
+                					.put("cluster.name",  clusterName)
+                					.put("node.name",  nodeNamee)
 //                					.put("client.transport.sniff",  "true")
 //                					.put("client.transport.ignore_cluster_name",  "true")		//设置为true可忽略连接的节点的集群名称验证
 //                					.put("client.transport.ping_timeout",  "1000")	//等待来自节点的ping响应的时间。 默认为5秒。
@@ -44,7 +49,11 @@ public class ESClient {
 		Client client  =  TransportClient.builder()
 										.settings(settings)
 										.build()
-										.addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName("39.106.37.249"), 9300));
+										.addTransportAddress(
+												new InetSocketTransportAddress(
+														InetAddress.getByName(url.split(":")[0]), 
+														Integer.parseInt(url.split(":")[1]))
+										);
 		return client;
 	}
 }
