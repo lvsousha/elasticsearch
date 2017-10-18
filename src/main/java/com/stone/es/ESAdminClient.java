@@ -1,7 +1,9 @@
 package com.stone.es;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -27,6 +29,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import com.stone.es.model.ESIndex;
 
 /**
  * 创建Index，添加Mapping，获取和修改Setting，获取集群信息
@@ -50,22 +53,22 @@ public class ESAdminClient {
 		client.close();
 	}
 	
-	public JSONArray getIndices(Client client) throws IOException{
+	public List<ESIndex> getIndices(Client client) throws IOException{
 		IndicesAdminClient iac = client.admin().indices();
 		GetIndexResponse response = iac.prepareGetIndex().get();
 		String[] indices = response.getIndices();
-		JSONArray array = new JSONArray();
+		List<ESIndex> list = new ArrayList<>();
 		for(String index : indices){
-			JSONObject object = new JSONObject();
-			object.put("index", index);
-			log.info("索引名："+index);
+			ESIndex obj = new ESIndex();
 			IndicesStatsResponse isr = iac.prepareStats(index).get();
 			CommonStats cs = isr.getTotal();
+			obj.setIndex(index);
+			obj.setDocs(String.valueOf(cs.getDocs().getCount()));
+			obj.setSize(cs.getStore().getSize().getMb()+"mb");
+//			log.info("索引名："+index);
 //			log.info(isr.toString());
-			object.put("docs", cs.getDocs().getCount());
-			object.put("size", cs.getStore().getSize().getMb()+"mb");
-			log.info("文件数量："+cs.getDocs().getCount());
-			log.info("占用空间:"+cs.getStore().getSize().getMb()+"mb");
+//			log.info("文件数量："+cs.getDocs().getCount());
+//			log.info("占用空间:"+cs.getStore().getSize().getMb()+"mb");
 			
 			GetMappingsResponse gmr = iac.prepareGetMappings(index).get();
 			Iterator<ObjectObjectCursor<String, ImmutableOpenMap<String, MappingMetaData>>> ioocip = gmr.mappings().iterator();
@@ -77,10 +80,10 @@ public class ESAdminClient {
 					ObjectObjectCursor<String, MappingMetaData> oocm = ioocm.next();
 					MappingMetaData mmd = oocm.value.get();
 					mappings.put(oocm.key, mmd.source().string());
-					log.info("映射:"+mmd.source().string());
+//					log.info("映射:"+mmd.source().string());
 					
 				}
-				object.put("mappings", mappings);
+				obj.setMappings(mappings);
 			}
 			
 			GetSettingsResponse gsr = iac.prepareGetSettings(index).get();
@@ -90,17 +93,17 @@ public class ESAdminClient {
 				JSONObject settings = new JSONObject();
 				ObjectObjectCursor<String, Settings> oocs = ioocs.next();
 				settings.put(oocs.key, oocs.value.getAsMap());
-				log.info(JSON.toJSON("配置:"+oocs.key+"："+oocs.value.getAsMap()));
-				object.put("settings", settings);
+//				log.info(JSON.toJSON("配置:"+oocs.key+"："+oocs.value.getAsMap()));
+				obj.setSettings(settings);
 			}
-			array.add(object);
+			list.add(obj);
 		}
 		Set<String> headers = response.getHeaders();
 		for(String header : headers){
 			log.info(header);
 		}
-		log.info(array);
-		return array;
+//		log.info(array);
+		return list;
 	}
 	
 	public JSONObject createIndex(Client client, String index, String type, String mappings) throws IOException{
