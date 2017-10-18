@@ -26,6 +26,7 @@ public class ESDataTransfer {
 		ESInsert esi = new ESInsert();
 		Client sourceClient = ESClient.createClientBySetting("elasticsearchZgy", "yp-zcl-node-2", "localhost:9387");
 		Client targetClient = ESClient.createClientBySetting("yp-zcl-app", "yp-zcl-node-1", "39.106.37.249:9300");
+		esdc.deleteIndices(targetClient, "dxal");
 		List<ESIndex> indices = esdc.getIndices(sourceClient);
 		for(ESIndex index : indices){
 			JSONObject types = index.getMappings();
@@ -33,6 +34,7 @@ public class ESDataTransfer {
 				List<ESData> datas = ess.searchAll(sourceClient, index.getIndex(), type, QueryBuilders.matchAllQuery());
 				esdc.createIndex(targetClient, index.getIndex(), type, types.getString(type));
 				esi.insertBulk(targetClient, datas);
+//				esi.insertBulkProcessor(targetClient, datas);
 			}
 		}
 		sourceClient.close();
@@ -56,6 +58,7 @@ public class ESDataTransfer {
 				esi.insertBulk(targetClient, datas);
 			}
 		}
+		
 	}
 	
 }

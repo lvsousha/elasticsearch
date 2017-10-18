@@ -61,7 +61,7 @@ public class ESInsert {
 	 * @param index
 	 * @param type
 	 */
-	public void insertBulkProcessor(Client client, String index, String type, List<ESData> datas){
+	public void insertBulkProcessor(Client client, List<ESData> datas){
 		BulkProcessor  bulkProcessor  =  BulkProcessor.builder(
                 client,   
                 new BulkProcessor.Listener(){

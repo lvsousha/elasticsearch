@@ -9,6 +9,7 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
+import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
@@ -120,6 +121,11 @@ public class ESAdminClient {
 				        				  .get();
 		log.info(response.isAcknowledged());
 		return result;
+	}
+	
+	public void deleteIndices(Client client, String... indices){
+		DeleteIndexResponse response = client.admin().indices().prepareDelete(indices).get();
+		log.info(response.isAcknowledged());
 	}
 	
 	public XContentBuilder createMappingsByXCB(String typeName) throws IOException{
