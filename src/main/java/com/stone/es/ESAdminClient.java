@@ -44,10 +44,10 @@ public class ESAdminClient {
 
 	public static void main(String[] args) throws Exception {
 		ESAdminClient esdc = new ESAdminClient();
-		Client client = ESClient.createClientBySetting();
-		
-//		esdc.getHealth(client);
-		esdc.getIndices(client);
+//		Client client = ESClient.createClientBySetting();
+		Client client = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.248.3:9500");
+		esdc.getHealth(client);
+//		esdc.getIndices(client);
 //		esdc.createIndex(client);
 //		esdc.createMappings("test");
 		
@@ -67,7 +67,7 @@ public class ESAdminClient {
 			obj.setIndex(index);
 			obj.setDocs(String.valueOf(cs.getDocs().getCount()));
 			obj.setSize(cs.getStore().getSize().getMb()+"mb");
-//			log.info("索引名："+index);
+			log.info("索引名："+index);
 //			log.info(isr.toString());
 //			log.info("文件数量："+cs.getDocs().getCount());
 //			log.info("占用空间:"+cs.getStore().getSize().getMb()+"mb");

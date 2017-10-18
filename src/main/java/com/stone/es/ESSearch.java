@@ -23,11 +23,13 @@ public class ESSearch {
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		ESSearch ess = new ESSearch();
-		Client client = ESClient.createClientBySetting();
+//		Client client = ESClient.createClientBySetting();
+		Client client = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.248.3:9500");
 		QueryBuilder query = QueryBuilders.matchAllQuery();
 //		QueryBuilder query = QueryBuilders.termQuery("anhao.raw", "最高人民法院");
 //		ess.search(client , "flfg", "flfg", query);
-		List<ESData> datas = ess.searchAll(client , "flfg", "flfg", query);
+//		List<ESData> datas = ess.searchAll(client , "flfg", "flfg", query);
+		List<ESData> datas = ess.search(client , "visit", "visit", query);
 		System.out.println(datas.size());
 		client.close();
 	}
