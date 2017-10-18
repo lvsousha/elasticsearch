@@ -22,6 +22,8 @@ public class ESInsert {
 
 	private Logger log = Logger.getLogger(this.getClass());
 	
+	private BulkProcessor bulkProcessor = null;
+	
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
@@ -62,30 +64,33 @@ public class ESInsert {
 	 * @param type
 	 */
 	public void insertBulkProcessor(Client client, List<ESData> datas){
-		BulkProcessor  bulkProcessor  =  BulkProcessor.builder(
-                client,   
-                new BulkProcessor.Listener(){
-	                    @Override
-	                    public  void  beforeBulk(long  executionId,BulkRequest  request){
-	                    	log.info(" 此方法在批量执行之前调用。例如，您可以使用request.numberOfActions()查看numberOfActions");
-	                    }
-	
-	                    @Override
-	                    public  void  afterBulk(long  executionId, BulkRequest  request, BulkResponse  response){
-	                    	log.info("此方法在批量执行后调用。例如，您可以使用response.hasFailures()检查是否存在一些失败的请求");
-	                    }
-	
-	                    @Override
-	                    public  void  afterBulk(long  executionId, BulkRequest  request, Throwable  failure){
-	                    	log.info("此方法在批量失败并调用Throwable时调用");
-	                    }
-                })
-                .setBulkActions(10000) 			//我们希望每10 000次请求执行批量
-                .setBulkSize(new  ByteSizeValue(1,  ByteSizeUnit.GB)) 		//我们想要每1gb批量刷新一次
-                .setFlushInterval(TimeValue.timeValueSeconds(10)) 			//无论请求数量多少，我们都希望每10秒刷新一次
-                .setConcurrentRequests(1) 				//设置并发请求数。值为0表示只允许执行单个请求。值为1表示在累积新的批量请求时允许执行1个并发请求。
-                .setBackoffPolicy(BackoffPolicy.exponentialBackoff(TimeValue.timeValueMillis(100),  3)) 
-                .build();
+		if(bulkProcessor == null){
+			bulkProcessor  =  BulkProcessor.builder(
+					client,   
+					new BulkProcessor.Listener(){
+						@Override
+						public  void  beforeBulk(long executionId, BulkRequest request){
+							log.info(executionId +" Start Execute "+request.numberOfActions());
+						}
+						
+						@Override
+						public  void  afterBulk(long executionId, BulkRequest request, BulkResponse response){
+							log.info(executionId+" Execute Is "+!response.hasFailures());
+						}
+						
+						@Override
+						public  void  afterBulk(long executionId, BulkRequest request, Throwable failure){
+							log.error(executionId, failure);
+						}
+					})
+					.setBulkActions(10000) 			//我们希望每10 000次请求执行批量
+					.setBulkSize(new  ByteSizeValue(1,  ByteSizeUnit.GB)) 		//我们想要每1gb批量刷新一次
+					.setFlushInterval(TimeValue.timeValueSeconds(10)) 			//无论请求数量多少，我们都希望每10秒刷新一次
+					.setConcurrentRequests(1) 				//设置并发请求数。值为0表示只允许执行单个请求。值为1表示在累积新的批量请求时允许执行1个并发请求。
+					.setBackoffPolicy(BackoffPolicy.exponentialBackoff(TimeValue.timeValueMillis(100),  3)) 
+					.build();
+			
+		}
 		for(ESData data : datas){
 			if(data.getId() != null && !data.getId().equals("")){
 				bulkProcessor.add(new  IndexRequest(data.getIndex(), data.getType(), data.getId()).source(data.getSource()));
@@ -93,6 +98,10 @@ public class ESInsert {
 				bulkProcessor.add(new  IndexRequest(data.getIndex(), data.getType()).source(data.getSource()));
 			}
 		}
+		
+	}
+	
+	public void closeBulkProcessor(){
 		bulkProcessor.close();
 	}
 

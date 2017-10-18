@@ -3,7 +3,6 @@ package com.stone.es;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.QueryBuilders;
 
@@ -14,7 +13,7 @@ import com.stone.es.model.ESIndex;
 public class ESDataTransfer {
 	
 	
-	private Logger log = Logger.getLogger(this.getClass());
+//	private Logger log = Logger.getLogger(this.getClass());
 	private ESAdminClient esdc = new ESAdminClient();
 	private ESSearch ess = new ESSearch();
 	private ESInsert esi = new ESInsert();
@@ -26,19 +25,22 @@ public class ESDataTransfer {
 		ESInsert esi = new ESInsert();
 		Client sourceClient = ESClient.createClientBySetting("elasticsearchZgy", "yp-zcl-node-2", "localhost:9387");
 		Client targetClient = ESClient.createClientBySetting("yp-zcl-app", "yp-zcl-node-1", "39.106.37.249:9300");
-		esdc.deleteIndices(targetClient, "dxal");
+		esdc.deleteIndices(targetClient, "dxal","flfg");
 		List<ESIndex> indices = esdc.getIndices(sourceClient);
 		for(ESIndex index : indices){
 			JSONObject types = index.getMappings();
 			for(String type : types.keySet()){
 				List<ESData> datas = ess.searchAll(sourceClient, index.getIndex(), type, QueryBuilders.matchAllQuery());
 				esdc.createIndex(targetClient, index.getIndex(), type, types.getString(type));
-				esi.insertBulk(targetClient, datas);
-//				esi.insertBulkProcessor(targetClient, datas);
+//				esi.insertBulk(targetClient, datas);
+				esi.insertBulkProcessor(targetClient, datas);
 			}
 		}
-		sourceClient.close();
-		targetClient.close();
+		while(true){
+			
+		}
+//		sourceClient.close();
+//		targetClient.close();
 		
 	}
 	

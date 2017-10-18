@@ -33,7 +33,7 @@ public class ESSearch {
 	}
 
 	public List<ESData> searchAll(Client client, String index, String type, QueryBuilder query){
-		log.info("START");
+		log.info("Select "+index+"-"+type+" Start");
 		List<ESData> datas = new ArrayList<>();
 		SearchResponse scrollResp = client.prepareSearch(index)
 				.setTypes(type)
@@ -56,7 +56,7 @@ public class ESSearch {
 		        break;
 		    }
 		}
-		log.info("END");
+		log.info("Select "+index+"-"+type+" End");
 		return datas;
 	}
 	

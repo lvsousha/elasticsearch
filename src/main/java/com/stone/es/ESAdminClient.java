@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
+import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
 import org.elasticsearch.action.admin.indices.get.GetIndexResponse;
 import org.elasticsearch.action.admin.indices.mapping.get.GetMappingsResponse;
 import org.elasticsearch.action.admin.indices.settings.get.GetSettingsResponse;
@@ -119,13 +120,19 @@ public class ESAdminClient {
 				        				  )
 				        				  .addMapping(type, mappings)
 				        				  .get();
-		log.info(response.isAcknowledged());
+		log.info("Create Index "+index+" Is "+response.isAcknowledged());
 		return result;
 	}
 	
 	public void deleteIndices(Client client, String... indices){
-		DeleteIndexResponse response = client.admin().indices().prepareDelete(indices).get();
-		log.info(response.isAcknowledged());
+		for(String index : indices){
+			IndicesExistsResponse ier = client.admin().indices().prepareExists(index).get();
+			if(ier.isExists()){
+				DeleteIndexResponse response = client.admin().indices().prepareDelete(index).get();
+				log.info("Delete "+index+" is "+response.isAcknowledged());
+			}
+			
+		}
 	}
 	
 	public XContentBuilder createMappingsByXCB(String typeName) throws IOException{
