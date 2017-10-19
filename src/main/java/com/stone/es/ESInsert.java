@@ -1,7 +1,9 @@
 package com.stone.es;
 
+import java.io.File;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.bulk.BackoffPolicy;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -28,6 +30,7 @@ public class ESInsert {
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		ESInsert esi = new ESInsert();
+		FileUtils.writeStringToFile(new File("/ES/json/flfg/flfg/a.json"), "ddd","utf-8");
 
 	}
 	
@@ -104,5 +107,15 @@ public class ESInsert {
 	public void closeBulkProcessor(){
 		bulkProcessor.close();
 	}
+
+	public BulkProcessor getBulkProcessor() {
+		return bulkProcessor;
+	}
+
+	public void setBulkProcessor(BulkProcessor bulkProcessor) {
+		this.bulkProcessor = bulkProcessor;
+	}
+	
+	
 
 }

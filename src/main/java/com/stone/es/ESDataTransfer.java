@@ -1,8 +1,10 @@
 package com.stone.es;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.io.FileUtils;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.query.QueryBuilders;
 
@@ -25,6 +27,7 @@ public class ESDataTransfer {
 		ESInsert esi = new ESInsert();
 		Client sourceClient = ESClient.createClientBySetting("elasticsearchZgy", "yp-zcl-node-2", "localhost:9387");
 		Client targetClient = ESClient.createClientBySetting("yp-zcl-app", "yp-zcl-node-1", "39.106.37.249:9300");
+//		Client targetClient = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.248.3:9500");
 		esdc.deleteIndices(targetClient, "dxal","flfg");
 		List<ESIndex> indices = esdc.getIndices(sourceClient);
 		for(ESIndex index : indices){
@@ -34,8 +37,13 @@ public class ESDataTransfer {
 				esdc.createIndex(targetClient, index.getIndex(), type, types.getString(type));
 //				esi.insertBulk(targetClient, datas);
 				esi.insertBulkProcessor(targetClient, datas);
+				for(ESData data : datas){
+					FileUtils.writeStringToFile(new File("/ES/json/"+data.getIndex()+"/"+data.getType()+"/"+data.getId()+".json"), data.getSource(),"utf-8");
+				}
 			}
 		}
+		esi.getBulkProcessor().close();
+		
 		while(true){
 			
 		}

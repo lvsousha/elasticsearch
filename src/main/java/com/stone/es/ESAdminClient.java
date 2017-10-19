@@ -46,10 +46,8 @@ public class ESAdminClient {
 		ESAdminClient esdc = new ESAdminClient();
 //		Client client = ESClient.createClientBySetting();
 		Client client = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.248.3:9500");
-		esdc.getHealth(client);
-//		esdc.getIndices(client);
-//		esdc.createIndex(client);
-//		esdc.createMappings("test");
+//		esdc.getHealth(client);
+		esdc.getIndices(client);
 		
 
 		client.close();
