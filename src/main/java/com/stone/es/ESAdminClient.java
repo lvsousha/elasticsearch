@@ -106,6 +106,15 @@ public class ESAdminClient {
 		return list;
 	}
 	
+	/**
+	 * 创建索引
+	 * @param client
+	 * @param index				索引名
+	 * @param type				类型名
+	 * @param mappings			映射
+	 * @return
+	 * @throws IOException
+	 */
 	public JSONObject createIndex(Client client, String index, String type, String mappings) throws IOException{
 		JSONObject result = new JSONObject();
 		IndicesAdminClient indicesAdminClient = client.admin().indices();
@@ -122,6 +131,11 @@ public class ESAdminClient {
 		return result;
 	}
 	
+	/**
+	 * 若索引存在，删除索引
+	 * @param client
+	 * @param indices		索引
+	 */
 	public void deleteIndices(Client client, String... indices){
 		for(String index : indices){
 			IndicesExistsResponse ier = client.admin().indices().prepareExists(index).get();
@@ -133,29 +147,27 @@ public class ESAdminClient {
 		}
 	}
 	
-	public XContentBuilder createMappingsByXCB(String typeName) throws IOException{
-		XContentBuilder  builder  =  XContentFactory.jsonBuilder().startObject()
-				.startObject(typeName)
-					.startObject("properties")
-						.startObject("name")
-							.field("type", "string")
-							.field("index", "analyzed")
-						.endObject()
-						.startObject("sex")
-							.field("type", "string")
-							.field("index", "analyzed")
-						.endObject()
-						.startObject("birth")
-							.field("type", "date")
-							.field("index", "analyzed")
-							.field("format", "strict_date_optional_time||epoch_millis")
-						.endObject()
-						.startObject("year")
-							.field("type", "string")
-							.field("index", "analyzed")
-						.endObject()
-					.endObject()
-				.endObject().endObject();
+	public XContentBuilder createMappingsByXCB(String typeName, List<Mapping> mappings) throws IOException{
+		XContentBuilder  builder  =  XContentFactory.jsonBuilder().startObject().startObject(typeName).startObject("properties");
+		for(Mapping mapping : mappings){
+			builder.startObject(mapping.getName());
+			if(mapping.getType().equals("string")){
+				builder.field("type", mapping.getType());
+				if(mapping.getFields()){
+					builder.startObject("fields")
+								.startObject("raw")
+									.field("type", mapping.getType())
+									.field("index", "not_analyzed")
+									.field("store","true")
+								.endObject()
+							.endObject();
+				}
+			}else if(mapping.getType().equals("date")){
+				builder.field("type", mapping.getType())
+						.field("format", mapping.getFormat());
+			}
+		}
+		builder.endObject().endObject().endObject();
 		log.info(builder.string());
 		return builder;
 	}
