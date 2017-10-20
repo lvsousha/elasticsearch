@@ -1,7 +1,11 @@
 package com.stone.es.http;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
@@ -10,6 +14,7 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.FileBody;
 import org.apache.http.entity.mime.content.StringBody;
@@ -107,18 +112,18 @@ public class HttpClientUtil {
         String result = "";
         try {  
             HttpPost httpPost = new HttpPost(url);  
-            
-//            StringBody comment = new StringBody(param, ContentType.TEXT_PLAIN); 
-            
-//            HttpEntity reqEntity = MultipartEntityBuilder.create().addTextBody("comment", param).build();
-            HttpEntity entity = EntityBuilder.create().setText(param).build();
-            
+            StringEntity entity = new StringEntity(param, Charset.forName("UTF-8"));
             httpPost.setEntity(entity);
   
             CloseableHttpResponse response = httpclient.execute(httpPost);  
             try {  
                 log.info(response.getStatusLine());  
-                HttpEntity repEntity = response.getEntity();  
+                HttpEntity repEntity = response.getEntity();
+//                InputStream in = repEntity.getContent();
+//                byte[] b = new byte[1024];
+//                while(in.read(b) != -1){
+//                	System.out.println(new String(b,"utf-8"));
+//                }
                 if (repEntity != null) {  
                 	result = EntityUtils.toString(repEntity);
                 }
