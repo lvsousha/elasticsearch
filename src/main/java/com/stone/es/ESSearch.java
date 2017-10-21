@@ -1,6 +1,7 @@
 package com.stone.es;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
 import org.elasticsearch.index.query.FilteredQueryBuilder;
 import org.elasticsearch.index.query.MatchQueryBuilder.Operator;
+import org.elasticsearch.index.query.MultiMatchQueryBuilder.Type;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
@@ -102,6 +104,11 @@ public class ESSearch {
 	
 	
 	public void search(Client client, String index, String type){
+		ESInsert esi = new ESInsert();
+		JSONObject object = new JSONObject();
+		object.put("user", 1);object.put("keyword", "最高人民法院");object.put("createDate", new Date());
+		ESData data = new ESData("history", "history", object.toString());
+		esi.insertSingle(client, data);
 		QueryBuilder qb = null;
 		QueryBuilder term = QueryBuilders.termQuery("title.raw", "最高人民法院");
 		QueryBuilder bool = QueryBuilders.boolQuery()
@@ -115,34 +122,50 @@ public class ESSearch {
 //							.minimumShouldMatch("50%")			//最少匹配数量；必须匹配的词项数用来表示一个文档是否相关
 //							.boost(2f)							//提升权重
 				;
-		//将任何与任一查询匹配的文档作为结果返回，但只将最佳匹配的评分作为查询的评分结果返回    试用于should
-		qb = QueryBuilders.disMaxQuery().add(bool);
+		QueryBuilder mulitMatch = QueryBuilders.multiMatchQuery("2015-06-29")
+												.type(Type.BEST_FIELDS)			//默认类型			cross_fields 词中心式匹配
+												.field("effective_date", 2f)
+												.field("release_date")
+												;
+		//best_fields——将任何与任一查询匹配的文档作为结果返回，但只将最佳匹配的评分作为查询的评分结果返回    试用于should   
+		qb = QueryBuilders.disMaxQuery()
+							.add(bool)
+							.tieBreaker(0.3f)		//tie_breaker 可以是 0 到 1 之间的浮点数，其中 0 代表使用 dis_max 最佳匹配语句的普通逻辑， 1 表示所有匹配语句同等重要
+							;
 		//constant_score 查询以非评分模式来执行 term 查询并以1.0作为统一评分,    也就是将query转换为filter
 		QueryBuilder constantScore = QueryBuilders.constantScoreQuery(qb);
-//		log.info(constantScore.toString());
+		
+		QueryBuilder matchPhraseQuery = QueryBuilders.matchPhraseQuery("neirong", "台湾地区")	// match_phrase 查询首先将查询字符串解析成一个词项列表，然后对这些词项进行搜索，但只保留那些包含 全部 搜索词项，且 位置 与搜索词项相同的文档
+														.slop(2)							//slop 参数告诉 match_phrase 查询词条相隔多远时仍然能将文档视为匹配
+														;
 		
 		SearchRequestBuilder srr = client.prepareSearch(index)
 							                .setTypes(type)
-							                .setQuery(qb) 
+							                .setQuery(matchPhraseQuery) 
 							                .addAggregation(
-							                		AggregationBuilders.terms("agg1").field("release_date.raw")
+							                		AggregationBuilders.terms("agg1")
+//							                								.field("title.raw")
+							                								.field("effective_date.raw")
+//							                							.size(100)
 							                )
 							                .addHighlightedField("neirong")
 							                .setHighlighterPreTags("<EM>").setHighlighterPostTags("</EM>")
 							                .setFrom(0)
 							                .setSize(5)
 							                ;
-		log.info(srr.toString());
 		
-		ESHttp.explain(client.prepareSearch(index).setTypes(type).setQuery(qb).toString());
 		
 		SearchResponse response = srr.execute().actionGet();
-		log.info(response.getHits().getTotalHits());
 		StringTerms agg1 = response.getAggregations().get("agg1");
-		System.out.println(response.toString());
 		for(Bucket bucket :agg1.getBuckets()){
 			log.info(bucket.getKeyAsString()+"===="+bucket.getDocCount());
 		}
+//		log.info(constantScore.toString());
+		log.info(srr.toString());
+		ESHttp.explain(client.prepareSearch(index).setTypes(type).setQuery(qb).toString());
+//		log.info(response.getHits().getTotalHits());
+		log.info(response.toString());
+		log.info(agg1.getBuckets().size());
 	}
 
 }
