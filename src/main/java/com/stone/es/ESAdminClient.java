@@ -32,6 +32,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 import com.stone.es.model.ESIndex;
+import com.stone.es.model.Mapping;
 
 /**
  * 创建Index，添加Mapping，获取和修改Setting，获取集群信息
@@ -44,10 +45,19 @@ public class ESAdminClient {
 
 	public static void main(String[] args) throws Exception {
 		ESAdminClient esdc = new ESAdminClient();
-//		Client client = ESClient.createClientBySetting();
-		Client client = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.248.3:9500");
+		Client client = ESClient.createClientBySetting();
+		List<Mapping> mappings = new ArrayList<>();
+		Mapping createDate = new Mapping();
+		Mapping user = new Mapping();
+		Mapping keyword = new Mapping();
+		createDate.setName("createDate");createDate.setType("date");
+		user.setName("user");user.setType("long");
+		keyword.setName("keyword");keyword.setType("string");keyword.setFields(true);
+		mappings.add(createDate);mappings.add(user);mappings.add(keyword);
+		XContentBuilder  xcb = esdc.createMappingsByXCB("history", mappings);
+		esdc.createIndex(client, "history", "history", xcb.string());
 //		esdc.getHealth(client);
-		esdc.getIndices(client);
+//		esdc.getIndices(client);
 		
 
 		client.close();
@@ -165,6 +175,10 @@ public class ESAdminClient {
 			}else if(mapping.getType().equals("date")){
 				builder.field("type", mapping.getType())
 						.field("format", mapping.getFormat());
+				builder.endObject();
+			}else{
+				builder.field("type", mapping.getType());
+				builder.endObject();
 			}
 		}
 		builder.endObject().endObject().endObject();

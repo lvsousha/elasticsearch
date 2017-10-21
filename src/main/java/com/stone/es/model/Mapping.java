@@ -1,11 +1,11 @@
-package com.stone.es;
+package com.stone.es.model;
 
 public class Mapping {
 	
 	private String name;					//字段名
-	private String type = "string";		//字段类型
-	private String index = "analyzed";		//analyzed，not_analyzed，no
-	private String format = "strict_date_optional_time||epoch_millis";					//用于类型是date
+	private String type;		//字段类型
+	private String index;		//analyzed，not_analyzed，no
+	private String format = "basic_date_time||epoch_millis";					//用于类型是date
 	private String analyzer;				//分词器
 	private Boolean fields = false;				//当字段类型是string时可以使用，可以针对同一个字段指定是否分词和不同的分词器
 	private Boolean isDefault = true;
