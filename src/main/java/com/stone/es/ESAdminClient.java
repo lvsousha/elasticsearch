@@ -45,7 +45,8 @@ public class ESAdminClient {
 
 	public static void main(String[] args) throws Exception {
 		ESAdminClient esdc = new ESAdminClient();
-		Client client = ESClient.createClientBySetting();
+//		Client client = ESClient.createClientBySetting();
+		Client client = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.248.3:9500");
 		List<Mapping> mappings = new ArrayList<>();
 		Mapping createDate = new Mapping();
 		Mapping user = new Mapping();
