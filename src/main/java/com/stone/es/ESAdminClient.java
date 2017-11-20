@@ -46,19 +46,19 @@ public class ESAdminClient {
 	public static void main(String[] args) throws Exception {
 		ESAdminClient esdc = new ESAdminClient();
 //		Client client = ESClient.createClientBySetting();
-		Client client = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.248.3:9500");
-		List<Mapping> mappings = new ArrayList<>();
-		Mapping createDate = new Mapping();
-		Mapping user = new Mapping();
-		Mapping keyword = new Mapping();
-		createDate.setName("createDate");createDate.setType("date");
-		user.setName("user");user.setType("long");
-		keyword.setName("keyword");keyword.setType("string");keyword.setFields(true);
-		mappings.add(createDate);mappings.add(user);mappings.add(keyword);
-		XContentBuilder  xcb = esdc.createMappingsByXCB("history", mappings);
-		esdc.createIndex(client, "history", "history", xcb.string());
+		Client client = ESClient.createClientShield("robot", "admin:000000", "122.112.210.226:9387");
+//		List<Mapping> mappings = new ArrayList<>();
+//		Mapping createDate = new Mapping();
+//		Mapping user = new Mapping();
+//		Mapping keyword = new Mapping();
+//		createDate.setName("createDate");createDate.setType("date");
+//		user.setName("user");user.setType("long");
+//		keyword.setName("keyword");keyword.setType("string");keyword.setFields(true);
+//		mappings.add(createDate);mappings.add(user);mappings.add(keyword);
+//		XContentBuilder  xcb = esdc.createMappingsByXCB("history", mappings);
+//		esdc.createIndex(client, "history", "history", xcb.string());
 //		esdc.getHealth(client);
-//		esdc.getIndices(client);
+		esdc.getIndices(client);
 		
 
 		client.close();
@@ -72,6 +72,7 @@ public class ESAdminClient {
 		for(String index : indices){
 			ESIndex obj = new ESIndex();
 			IndicesStatsResponse isr = iac.prepareStats(index).get();
+			log.info(isr.toString());
 			CommonStats cs = isr.getTotal();
 			obj.setIndex(index);
 			obj.setDocs(String.valueOf(cs.getDocs().getCount()));
