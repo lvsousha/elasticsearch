@@ -26,8 +26,8 @@ public class ESDataTransfer {
 		ESSearch ess = new ESSearch();
 		ESInsert esi = new ESInsert();
 		Client sourceClient = ESClient.createClientBySetting("elasticsearchZgy", "yp-zcl-node-2", "localhost:9387");
-		Client targetClient = ESClient.createClientBySetting("yp-zcl-app", "yp-zcl-node-1", "39.106.37.249:9300");
-//		Client targetClient = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.248.3:9500");
+//		Client targetClient = ESClient.createClientBySetting("yp-zcl-app", "yp-zcl-node-1", "39.106.37.249:9300");
+		Client targetClient = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.248.3:9500");
 		esdc.deleteIndices(targetClient, "dxal","flfg");
 		List<ESIndex> indices = esdc.getIndices(sourceClient);
 		for(ESIndex index : indices){
@@ -38,7 +38,7 @@ public class ESDataTransfer {
 //				esi.insertBulk(targetClient, datas);
 				esi.insertBulkProcessor(targetClient, datas);
 				for(ESData data : datas){
-					FileUtils.writeStringToFile(new File("/ES/json/"+data.getIndex()+"/"+data.getType()+"/"+data.getId()+".json"), data.getSource(),"utf-8");
+					FileUtils.writeStringToFile(new File("/ES/20180104json/"+data.getIndex()+"/"+data.getType()+"/"+data.getId()+".json"), data.getSource(),"utf-8");
 				}
 			}
 		}

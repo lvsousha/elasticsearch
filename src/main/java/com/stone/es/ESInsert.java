@@ -34,10 +34,13 @@ public class ESInsert {
 		Client client = ESClient.createClientBySetting();
 		SimpleDateFormat sdf  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 		ESInsert esi = new ESInsert();
-		JSONObject object = new JSONObject();
-		object.put("user", 2);object.put("keyword", "最高人民法院");object.put("createDate", sdf.format(new Date()));
-		ESData data = new ESData("history", "history", object.toString());
-		esi.insertSingle(client, data);
+//		JSONObject object = new JSONObject();
+//		object.put("user", 2);object.put("keyword", "最高人民法院");object.put("createDate", sdf.format(new Date()));
+//		ESData data = new ESData("history", "history", object.toString());
+		for(File file : new File("/JSON").listFiles()){
+			ESData data = new ESData("flfg", "flfg", FileUtils.readFileToString(file,"utf-8"));
+			esi.insertSingle(client, data);
+		}
 
 	}
 	
