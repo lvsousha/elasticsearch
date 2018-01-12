@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequestBuilder;
+import org.elasticsearch.action.admin.indices.alias.IndicesAliasesResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.admin.indices.exists.indices.IndicesExistsResponse;
@@ -23,6 +24,8 @@ import org.elasticsearch.client.ClusterAdminClient;
 import org.elasticsearch.client.IndicesAdminClient;
 import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.cluster.health.ClusterIndexHealth;
+import org.elasticsearch.cluster.metadata.AliasAction;
+import org.elasticsearch.cluster.metadata.AliasOrIndex;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.settings.Settings;
@@ -48,24 +51,36 @@ public class ESAdminClient {
 	public static void main(String[] args) throws Exception {
 		ESAdminClient esdc = new ESAdminClient();
 //		Client client = ESClient.createClientBySetting();
-		Client client = ESClient.createClientShield("robot", "admin:000000", "122.112.210.226:9387");
-//		List<Mapping> mappings = new ArrayList<>();
-//		Mapping createDate = new Mapping();
-//		Mapping user = new Mapping();
-//		Mapping keyword = new Mapping();
-//		createDate.setName("createDate");createDate.setType("date");
-//		user.setName("user");user.setType("long");
-//		keyword.setName("keyword");keyword.setType("string");keyword.setFields(true);
-//		mappings.add(createDate);mappings.add(user);mappings.add(keyword);
-//		XContentBuilder  xcb = esdc.createMappingsByXCB("history", mappings);
-//		esdc.createIndex(client, "history", "history", xcb.string());
+//		Client client = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.248.3:9500");
+		Client client = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.247.180:9300");
+		String index = "flfg-v2";
+		String type = "flfg-v2";
+		String alias = "flfg-v";
+		esdc.deleteIndices(client,"flfg-v2");
+		List<Mapping> mappings = new ArrayList<>();
+		Mapping createDate = new Mapping();
+		Mapping title = new Mapping();
+		Mapping content = new Mapping();
+		createDate.setName("createDate");createDate.setType("date");
+		title.setName("title");title.setType("string");title.setFields(true);
+		content.setName("content");content.setType("string");;
+		mappings.add(createDate);mappings.add(title);mappings.add(content);
+		XContentBuilder  xcb = esdc.createMappingsByXCB(type, mappings);
+		esdc.createIndex(client, index, type, xcb.string());
 //		esdc.getHealth(client);
-		esdc.getIndices(client);
-		
+//		esdc.getIndices(client);
+		esdc.createAlias(client, index, alias);
+//		esdc.deleteAlias(client, index, alias);
 
 		client.close();
 	}
 	
+	/**
+	 * 获取索引信息，包括索引名，文件数量，占用空间，映射（Mapping），配置（settings）
+	 * @param client
+	 * @return
+	 * @throws IOException
+	 */
 	public List<ESIndex> getIndices(Client client) throws IOException{
 		IndicesAdminClient iac = client.admin().indices();
 		GetIndexResponse response = iac.prepareGetIndex().get();
@@ -161,6 +176,13 @@ public class ESAdminClient {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param typeName		类型名称
+	 * @param mappings
+	 * @return
+	 * @throws IOException
+	 */
 	public XContentBuilder createMappingsByXCB(String typeName, List<Mapping> mappings) throws IOException{
 		XContentBuilder  builder  =  XContentFactory.jsonBuilder().startObject().startObject(typeName).startObject("properties");
 		for(Mapping mapping : mappings){
@@ -176,6 +198,7 @@ public class ESAdminClient {
 								.endObject()
 							.endObject();
 				}
+				builder.endObject();
 			}else if(mapping.getType().equals("date")){
 				builder.field("type", mapping.getType())
 						.field("format", mapping.getFormat());
@@ -184,6 +207,7 @@ public class ESAdminClient {
 				builder.field("type", mapping.getType());
 				builder.endObject();
 			}
+			
 		}
 		builder.endObject().endObject().endObject();
 		log.info(builder.string());
@@ -249,6 +273,22 @@ public class ESAdminClient {
 		log.info(result.toString());
 		log.info(healths.toString());
 		return result;
+	}
+	
+	public void createAlias(Client client, String index, String alias){
+		IndicesAliasesRequest iarb = new IndicesAliasesRequest();
+		IndicesAliasesRequest.AliasActions aliasAction = new IndicesAliasesRequest.AliasActions(AliasAction.Type.ADD,index,alias);
+		iarb.addAliasAction(aliasAction);
+		IndicesAliasesResponse iar = client.admin().indices().aliases(iarb).actionGet();
+		log.info(iar.isAcknowledged());
+	}
+	
+	public void deleteAlias(Client client, String index, String alias){
+		IndicesAliasesRequest iarb = new IndicesAliasesRequest();
+		IndicesAliasesRequest.AliasActions aliasAction = new IndicesAliasesRequest.AliasActions(AliasAction.Type.REMOVE,index,alias);
+		iarb.addAliasAction(aliasAction);
+		IndicesAliasesResponse iar = client.admin().indices().aliases(iarb).actionGet();
+		log.info(iar.isAcknowledged());
 	}
 
 }
