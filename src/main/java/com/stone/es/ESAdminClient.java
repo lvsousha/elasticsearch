@@ -9,7 +9,6 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequest;
-import org.elasticsearch.action.admin.indices.alias.IndicesAliasesRequestBuilder;
 import org.elasticsearch.action.admin.indices.alias.IndicesAliasesResponse;
 import org.elasticsearch.action.admin.indices.create.CreateIndexResponse;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
@@ -25,12 +24,9 @@ import org.elasticsearch.client.IndicesAdminClient;
 import org.elasticsearch.cluster.health.ClusterHealthStatus;
 import org.elasticsearch.cluster.health.ClusterIndexHealth;
 import org.elasticsearch.cluster.metadata.AliasAction;
-import org.elasticsearch.cluster.metadata.AliasOrIndex;
 import org.elasticsearch.cluster.metadata.MappingMetaData;
 import org.elasticsearch.common.collect.ImmutableOpenMap;
 import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -38,7 +34,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
 import com.stone.es.index.ESIndexBasic;
 import com.stone.es.model.ESIndex;
-import com.stone.es.model.Mapping;
 
 /**
  * 创建Index，添加Mapping，获取和修改Setting，获取集群信息
@@ -60,23 +55,6 @@ public class ESAdminClient {
 //		String alias = "history-v";
 //		esdc.deleteAlias(client, index, alias);
 		esdc.deleteIndices(client,"history-v2");
-		List<Mapping> mappings = new ArrayList<>();
-		Mapping createDate = new Mapping();
-		Mapping keyword = new Mapping();
-		Mapping user = new Mapping();
-		Mapping searchType = new Mapping();
-		createDate.setName("createDate");createDate.setType("date");
-		keyword.setName("keyword");keyword.setType("string");keyword.setFields(true);
-		searchType.setName("type");searchType.setType("string");searchType.setFields(true);
-		user.setName("user");user.setType("long");
-		mappings.add(createDate);mappings.add(keyword);mappings.add(searchType);mappings.add(user);
-		XContentBuilder  xcb = esdc.createMappingsByXCB(type, mappings);
-		esdc.createIndex(client, index, type, xcb.string());
-		List<Mapping> appendMappings = new ArrayList<>();
-		Mapping append = new Mapping();
-		append.setName("append");append.setType("string");append.setFields(true);
-		appendMappings.add(append);
-		System.out.println(esib.appendMapping(client, index, type, esdc.createMappingsByXCB(type, appendMappings).string()));
 //		esdc.getHealth(client);
 //		esdc.getIndices(client);
 //		esdc.createAlias(client, index, alias);
@@ -186,80 +164,6 @@ public class ESAdminClient {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param typeName		类型名称
-	 * @param mappings
-	 * @return
-	 * @throws IOException
-	 */
-	public XContentBuilder createMappingsByXCB(String typeName, List<Mapping> mappings) throws IOException{
-		XContentBuilder  builder  =  XContentFactory.jsonBuilder()
-													.startObject()
-														.startObject(typeName)
-															.startObject("properties");
-		for(Mapping mapping : mappings){
-			builder.startObject(mapping.getName());
-			if(mapping.getType().equals("string")){
-				builder.field("type", mapping.getType());
-				if(mapping.getFields()){
-					builder.startObject("fields")
-								.startObject("raw")
-									.field("type", mapping.getType())
-									.field("index", "not_analyzed")
-									.field("store","true")
-								.endObject()
-							.endObject();
-				}
-				builder.endObject();
-			}else if(mapping.getType().equals("date")){
-				builder.field("type", mapping.getType())
-						.field("format", mapping.getFormat());
-				builder.endObject();
-			}else{
-				builder.field("type", mapping.getType());
-				builder.endObject();
-			}
-			
-		}
-		builder
-			.endObject()
-				.endObject()
-					.endObject();
-		log.info(builder.string());
-		return builder;
-	}
-	
-	public JSONObject createMappings(String typeName){
-		
-		JSONObject result = new JSONObject();
-		JSONObject type = new JSONObject();
-		JSONObject properties = new JSONObject();
-		JSONObject name = new JSONObject();
-		JSONObject sex = new JSONObject();
-		JSONObject birth = new JSONObject();
-		JSONObject year = new JSONObject();
-		name.put("type", "string");
-		name.put("index", "analyzed");
-		sex.put("type", "string");
-		sex.put("index", "analyzed");
-		birth.put("type", "date");
-		birth.put("index", "analyzed");
-		birth.put("format", "strict_date_optional_time||epoch_millis");
-		year.put("type", "string");
-		year.put("index", "not_analyzed");
-		
-		properties.put("name", name);
-		properties.put("sex", sex);
-		properties.put("birth", birth);
-		properties.put("year", year);
-		
-		type.put("properties", properties);
-		result.put(typeName, type);
-		return result;
-		
-	}
-
 	public JSONObject getHealth(Client client) {
 		JSONObject result = new JSONObject();
 		ClusterAdminClient clusterAdminClient = client.admin().cluster();
