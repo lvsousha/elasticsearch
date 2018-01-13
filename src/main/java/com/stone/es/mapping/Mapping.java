@@ -1,5 +1,9 @@
 package com.stone.es.mapping;
 
-public class Mapping {
+import org.elasticsearch.common.xcontent.XContentBuilder;
 
+public interface Mapping {
+
+	public void string(XContentBuilder builder) throws Exception;
+	
 }

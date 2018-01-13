@@ -1,8 +1,11 @@
 package com.stone.es.mapping;
 
-public class DateMapping {
+import org.elasticsearch.common.xcontent.XContentBuilder;
+
+public class DateMapping implements Mapping{
 
 	private String type = "date";
+	private String name;
 	private Double boost = 1.0;					//权重
 	private Boolean doc_values = true;
 	private String format = "yyyy-MM-dd HH:mm:ss.SSS||epoch_millis";
@@ -13,6 +16,17 @@ public class DateMapping {
 	private Integer precision_step = 16;
 	private Boolean store = false;
 	
+	public DateMapping(String name){
+		this.name = name;
+	}
+	
+	@Override
+	public void string(XContentBuilder builder) throws Exception {
+		builder.startObject(this.name);
+		builder.field("type", this.type)
+				.field("format", this.format);
+		builder.endObject();
+	}
 	
 	public String getType() {
 		return type;

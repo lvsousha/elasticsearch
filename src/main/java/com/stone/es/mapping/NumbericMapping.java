@@ -1,8 +1,11 @@
 package com.stone.es.mapping;
 
-public class NumbericMapping {
+import org.elasticsearch.common.xcontent.XContentBuilder;
 
-	private String type = "integer";	//long,integer,short,byte,double,float
+public class NumbericMapping implements Mapping{
+
+	private String type;	//long,integer,short,byte,double,float
+	private String name;
 	private Boolean coerce = true;		//是否转换string为number
 	private Double boost = 1.0;			//权重
 	private Boolean doc_values = true;
@@ -12,6 +15,31 @@ public class NumbericMapping {
 	private String null_value = "null";
 	private Integer precision_step;
 	private Boolean store = false;
+	
+	public static final String INTEGER = "integer";
+	public static final String LONG = "long";
+	public static final String SHORT = "short";
+	public static final String BYTE = "byte";
+	public static final String DOUBLE = "double";
+	public static final String FLOAT = "float";
+	
+	public NumbericMapping(String name){
+		this.name = name;
+		this.type = NumbericMapping.INTEGER;
+	}
+	
+	public NumbericMapping(String name, String type){
+		this.name = name;
+		this.type = type;
+	}
+	
+	@Override
+	public void string(XContentBuilder builder) throws Exception {
+		builder.startObject(this.name);
+		builder.field("type", this.type);
+		builder.endObject();
+	}
+	
 	public String getType() {
 		return type;
 	}

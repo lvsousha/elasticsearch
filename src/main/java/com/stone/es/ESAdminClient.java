@@ -36,6 +36,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
+import com.stone.es.index.ESIndexBasic;
 import com.stone.es.model.ESIndex;
 import com.stone.es.model.Mapping;
 
@@ -49,27 +50,33 @@ public class ESAdminClient {
 	private Logger log = Logger.getRootLogger();
 
 	public static void main(String[] args) throws Exception {
+		ESIndexBasic esib = new ESIndexBasic();
 		ESAdminClient esdc = new ESAdminClient();
-//		Client client = ESClient.createClientBySetting();
-		Client client = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.248.3:9500");
+		Client client = ESClient.createClientBySetting();
+//		Client client = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.248.3:9500");
 //		Client client = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.247.180:9300");
 		String index = "history-v2";
 		String type = "history-v2";
-		String alias = "history-v";
-		esdc.deleteAlias(client, index, alias);
-//		esdc.deleteIndices(client,"history-v2");
-//		List<Mapping> mappings = new ArrayList<>();
-//		Mapping createDate = new Mapping();
-//		Mapping keyword = new Mapping();
-//		Mapping user = new Mapping();
-//		Mapping searchType = new Mapping();
-//		createDate.setName("createDate");createDate.setType("date");
-//		keyword.setName("keyword");keyword.setType("string");keyword.setFields(true);
-//		searchType.setName("type");searchType.setType("string");searchType.setFields(true);
-//		user.setName("user");user.setType("long");
-//		mappings.add(createDate);mappings.add(keyword);mappings.add(searchType);mappings.add(user);
-//		XContentBuilder  xcb = esdc.createMappingsByXCB(type, mappings);
-//		esdc.createIndex(client, index, type, xcb.string());
+//		String alias = "history-v";
+//		esdc.deleteAlias(client, index, alias);
+		esdc.deleteIndices(client,"history-v2");
+		List<Mapping> mappings = new ArrayList<>();
+		Mapping createDate = new Mapping();
+		Mapping keyword = new Mapping();
+		Mapping user = new Mapping();
+		Mapping searchType = new Mapping();
+		createDate.setName("createDate");createDate.setType("date");
+		keyword.setName("keyword");keyword.setType("string");keyword.setFields(true);
+		searchType.setName("type");searchType.setType("string");searchType.setFields(true);
+		user.setName("user");user.setType("long");
+		mappings.add(createDate);mappings.add(keyword);mappings.add(searchType);mappings.add(user);
+		XContentBuilder  xcb = esdc.createMappingsByXCB(type, mappings);
+		esdc.createIndex(client, index, type, xcb.string());
+		List<Mapping> appendMappings = new ArrayList<>();
+		Mapping append = new Mapping();
+		append.setName("append");append.setType("string");append.setFields(true);
+		appendMappings.add(append);
+		System.out.println(esib.appendMapping(client, index, type, esdc.createMappingsByXCB(type, appendMappings).string()));
 //		esdc.getHealth(client);
 //		esdc.getIndices(client);
 //		esdc.createAlias(client, index, alias);
@@ -187,7 +194,10 @@ public class ESAdminClient {
 	 * @throws IOException
 	 */
 	public XContentBuilder createMappingsByXCB(String typeName, List<Mapping> mappings) throws IOException{
-		XContentBuilder  builder  =  XContentFactory.jsonBuilder().startObject().startObject(typeName).startObject("properties");
+		XContentBuilder  builder  =  XContentFactory.jsonBuilder()
+													.startObject()
+														.startObject(typeName)
+															.startObject("properties");
 		for(Mapping mapping : mappings){
 			builder.startObject(mapping.getName());
 			if(mapping.getType().equals("string")){
@@ -212,7 +222,10 @@ public class ESAdminClient {
 			}
 			
 		}
-		builder.endObject().endObject().endObject();
+		builder
+			.endObject()
+				.endObject()
+					.endObject();
 		log.info(builder.string());
 		return builder;
 	}
