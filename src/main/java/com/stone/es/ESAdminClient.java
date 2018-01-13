@@ -32,7 +32,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
-import com.stone.es.index.ESIndexBasic;
+import com.stone.es.index.ESIndexClientBasic;
 import com.stone.es.model.ESIndex;
 
 /**
@@ -45,7 +45,7 @@ public class ESAdminClient {
 	private Logger log = Logger.getRootLogger();
 
 	public static void main(String[] args) throws Exception {
-		ESIndexBasic esib = new ESIndexBasic();
+		ESIndexClientBasic esib = new ESIndexClientBasic();
 		ESAdminClient esdc = new ESAdminClient();
 		Client client = ESClient.createClientBySetting();
 //		Client client = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.248.3:9500");
@@ -80,8 +80,8 @@ public class ESAdminClient {
 			log.info(isr.toString());
 			CommonStats cs = isr.getTotal();
 			obj.setIndex(index);
-			obj.setDocs(String.valueOf(cs.getDocs().getCount()));
-			obj.setSize(cs.getStore().getSize().getMb()+"mb");
+			obj.setDocs(cs.getDocs().getCount());
+			obj.setSize(cs.getStore().getSize().getMb());
 			log.info("索引名："+index);
 //			log.info(isr.toString());
 //			log.info("文件数量："+cs.getDocs().getCount());

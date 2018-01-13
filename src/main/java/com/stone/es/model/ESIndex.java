@@ -5,16 +5,18 @@ import com.alibaba.fastjson.JSONObject;
 public class ESIndex {
 
 	private String index;
-	private String docs;
-	private String size;//mb
+	private Long docs;
+	private Long size;//mb
 	private JSONObject mappings;
 	private JSONObject settings;
+	private ESIndexStatus status;
+	private ESIndexMetadata metadata;
 	
 	public ESIndex(){
 		
 	}
 	
-	public ESIndex(String index, String docs, String size, JSONObject mappings, JSONObject settings){
+	public ESIndex(String index, Long docs, Long size, JSONObject mappings, JSONObject settings){
 		this.index = index;
 		this.docs = docs;
 		this.size = size;
@@ -30,19 +32,19 @@ public class ESIndex {
 		this.index = index;
 	}
 
-	public String getDocs() {
+	public Long getDocs() {
 		return docs;
 	}
 
-	public void setDocs(String docs) {
+	public void setDocs(Long docs) {
 		this.docs = docs;
 	}
 
-	public String getSize() {
+	public Long getSize() {
 		return size;
 	}
 
-	public void setSize(String size) {
+	public void setSize(Long size) {
 		this.size = size;
 	}
 
@@ -60,6 +62,22 @@ public class ESIndex {
 
 	public void setSettings(JSONObject settings) {
 		this.settings = settings;
+	}
+
+	public ESIndexStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(ESIndexStatus status) {
+		this.status = status;
+	}
+
+	public ESIndexMetadata getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(ESIndexMetadata metadata) {
+		this.metadata = metadata;
 	}
 	
 	
