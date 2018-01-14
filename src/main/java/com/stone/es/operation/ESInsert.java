@@ -1,4 +1,4 @@
-package com.stone.es;
+package com.stone.es.operation;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -21,6 +21,7 @@ import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.common.unit.TimeValue;
 
 import com.alibaba.fastjson.JSONObject;
+import com.stone.es.ESClient;
 import com.stone.es.model.ESData;
 
 public class ESInsert {
@@ -54,20 +55,29 @@ public class ESInsert {
 		return response;
 	}
 	
-	public BulkResponse insertBulk(Client client, List<ESData> datas){
+	public void insertBulk(Client client, List<ESData> datas){
 		BulkRequestBuilder bulkRequest = client.prepareBulk();
+		int num = 0;
 		for(int index=0; index<datas.size(); index++){
+			num = num + 1;
 			ESData data = datas.get(index);
 			if(data.getId() != null && !data.getId().equals("")){
 				bulkRequest.add(client.prepareIndex(data.getIndex(), data.getType(), data.getId()).setSource(data.getSource()));
 			}else{
 				bulkRequest.add(client.prepareIndex(data.getIndex(), data.getType()).setSource(data.getSource()));
 			}
+			if(num < 5000){
+				continue;
+			}
+			BulkResponse bulkResponse = bulkRequest.get();
+			log.info(!bulkResponse.hasFailures());
+			bulkRequest = client.prepareBulk();
+			num = 0;
 		}
-		BulkResponse bulkResponse = bulkRequest.get();
-		log.info(!bulkResponse.hasFailures());
-		
-		return bulkResponse;
+		if(num > 0){
+			BulkResponse bulkResponse = bulkRequest.get();
+			log.info(!bulkResponse.hasFailures());
+		}
 	}
 	
 	/**

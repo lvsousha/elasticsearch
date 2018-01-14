@@ -15,21 +15,28 @@ public class ESIndexTest {
 
 	public static void main(String[] args) throws Exception {
 		ESIndexTest esit = new ESIndexTest();
-		Client client = ESClient.createClientBySetting();
+//		Client client = ESClient.createClientBySetting();
+		Client client = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.248.3:9500");
 		
 		
 		
-		esit.testGetIndexState(client);
+		esit.testGetIndexState(client,"history-v2");
 //		esit.testDeleteCreateIndexAndAppendMapping(client);
 		
 		client.close();
 	}
 	
+	/**
+	 * 获取索引大小，文件数量，映射，配置，别名
+	 * @param client
+	 * @param indices
+	 * @throws Exception
+	 */
 	public void testGetIndexState(Client client, String... indices) throws Exception{
 		ESIndexClient esIndex = new ESIndexClientBasic();
-//		esIndex.getIndexMetadata(client,"flfg");
-//		esIndex.getIndexStatus(client,"flfg");
-		esIndex.getIndices(client,"flfg");
+		esIndex.getIndexMetadata(client, indices);
+//		esIndex.getIndexStatus(client, indices);
+//		esIndex.getIndices(client, indices);
 	}
 	
 	

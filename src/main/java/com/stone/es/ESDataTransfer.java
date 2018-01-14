@@ -11,6 +11,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import com.alibaba.fastjson.JSONObject;
 import com.stone.es.model.ESData;
 import com.stone.es.model.ESIndex;
+import com.stone.es.operation.ESInsert;
 
 public class ESDataTransfer {
 	

@@ -34,6 +34,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.stone.es.http.ESHttp;
 import com.stone.es.model.ESData;
+import com.stone.es.operation.ESInsert;
 
 public class ESSearch {
 
