@@ -32,7 +32,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.carrotsearch.hppc.cursors.ObjectObjectCursor;
-import com.stone.es.index.ESIndexClientBasic;
 import com.stone.es.model.ESIndex;
 
 /**
@@ -45,13 +44,13 @@ public class ESAdminClient {
 	private Logger log = Logger.getRootLogger();
 
 	public static void main(String[] args) throws Exception {
-		ESIndexClientBasic esib = new ESIndexClientBasic();
+//		ESIndexClientBasic esib = new ESIndexClientBasic();
 		ESAdminClient esdc = new ESAdminClient();
 		Client client = ESClient.createClientBySetting();
 //		Client client = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.248.3:9500");
 //		Client client = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.247.180:9300");
-		String index = "history-v2";
-		String type = "history-v2";
+//		String index = "history-v2";
+//		String type = "history-v2";
 //		String alias = "history-v";
 //		esdc.deleteAlias(client, index, alias);
 		esdc.deleteIndices(client,"history-v2");

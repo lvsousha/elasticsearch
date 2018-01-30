@@ -1,8 +1,6 @@
 package com.stone.es.mapping;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.common.xcontent.XContentBuilder.FieldCaseConversion;
-import org.elasticsearch.common.xcontent.XContentBuilderString;
 import org.elasticsearch.common.xcontent.XContentFactory;
 
 import com.alibaba.fastjson.JSONObject;

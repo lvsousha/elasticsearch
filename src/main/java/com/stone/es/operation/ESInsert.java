@@ -1,8 +1,6 @@
 package com.stone.es.operation;
 
 import java.io.File;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -20,7 +18,6 @@ import org.elasticsearch.common.unit.ByteSizeUnit;
 import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.common.unit.TimeValue;
 
-import com.alibaba.fastjson.JSONObject;
 import com.stone.es.ESClient;
 import com.stone.es.model.ESData;
 
@@ -33,7 +30,7 @@ public class ESInsert {
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 		Client client = ESClient.createClientBySetting();
-		SimpleDateFormat sdf  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+//		SimpleDateFormat sdf  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 		ESInsert esi = new ESInsert();
 //		JSONObject object = new JSONObject();
 //		object.put("user", 2);object.put("keyword", "最高人民法院");object.put("createDate", sdf.format(new Date()));

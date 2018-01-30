@@ -2,35 +2,24 @@ package com.stone.es;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.apache.lucene.queryparser.xml.FilterBuilder;
-import org.elasticsearch.action.admin.indices.analyze.AnalyzeRequest;
-import org.elasticsearch.action.admin.indices.analyze.AnalyzeRequestBuilder;
-import org.elasticsearch.action.explain.ExplainRequest;
-import org.elasticsearch.action.explain.ExplainRequestBuilder;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.TimeValue;
-import org.elasticsearch.index.query.FilteredQueryBuilder;
-import org.elasticsearch.index.query.MatchQueryBuilder.Operator;
 import org.elasticsearch.index.query.MultiMatchQueryBuilder.Type;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
-import org.elasticsearch.search.aggregations.Aggregation;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
 import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.search.sort.SortParseElement;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.stone.es.http.ESHttp;
 import com.stone.es.model.ESData;
@@ -45,7 +34,7 @@ public class ESSearch {
 		ESSearch ess = new ESSearch();
 		Client client = ESClient.createClientBySetting();
 //		QueryBuilder query = QueryBuilders.matchAllQuery();
-		QueryBuilder query = QueryBuilders.termQuery("anhao.raw", "最高人民法院");
+//		QueryBuilder query = QueryBuilders.termQuery("anhao.raw", "最高人民法院");
 //		ess.search(client , "flfg", "flfg", query);
 //		List<ESData> datas = ess.searchAll(client , "flfg", "flfg", query);
 //		List<ESData> datas = ess.search(client , "flfg", "flfg", query, 0, 10);
@@ -104,6 +93,7 @@ public class ESSearch {
 	}
 	
 	
+	@SuppressWarnings("unused")
 	public void search(Client client, String index, String type){
 		ESInsert esi = new ESInsert();
 		JSONObject object = new JSONObject();
