@@ -1,4 +1,4 @@
-package com.stone.es;
+package com.stone.es.operation;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,13 +21,15 @@ import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.search.sort.SortParseElement;
 
 import com.alibaba.fastjson.JSONObject;
+import com.stone.es.ESClient;
 import com.stone.es.http.ESHttp;
 import com.stone.es.model.ESData;
-import com.stone.es.operation.ESInsert;
 
 public class ESSearch {
 
 	private Logger log = Logger.getLogger(this.getClass());
+	private static final int SEARCH_TIME_VALUE = 60000;
+	private static final int SEARCH_SIZE = 5000;
 	
 	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
@@ -49,9 +51,9 @@ public class ESSearch {
 		SearchResponse scrollResp = client.prepareSearch(index)
 				.setTypes(type)
 		        .addSort(SortParseElement.DOC_FIELD_NAME, SortOrder.ASC)
-		        .setScroll(new TimeValue(60000))
+		        .setScroll(new TimeValue(SEARCH_TIME_VALUE))
 		        .setQuery(query)
-		        .setSize(5000)
+		        .setSize(SEARCH_SIZE)
 		        .execute()
 		        .actionGet();
 		while(true){
@@ -60,7 +62,7 @@ public class ESSearch {
 				datas.add(data);
 		    }
 		    scrollResp = client.prepareSearchScroll(scrollResp.getScrollId())
-		    					.setScroll(new TimeValue(60000))
+		    					.setScroll(new TimeValue(SEARCH_TIME_VALUE))
 		    					.execute()
 		    					.actionGet();
 		    if(scrollResp.getHits().getHits().length == 0){
@@ -159,4 +161,28 @@ public class ESSearch {
 		log.info(agg1.getBuckets().size());
 	}
 
+	public void termQuery(Client client){
+		
+	}
+
+	public void boolQuery(Client client){
+		
+	}
+
+	public void matchQuery(Client client){
+		
+	}
+
+	public void multiMatchQuery(Client client){
+		
+	}
+
+	public void constantScoreQuery(Client client){
+		
+	}
+
+	public void matchPhraseQuery(Client client){
+		
+	}
+	
 }
