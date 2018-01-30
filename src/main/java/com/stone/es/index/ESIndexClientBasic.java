@@ -40,6 +40,10 @@ public class ESIndexClientBasic implements ESIndexClient{
 	
 	@Override
 	public Boolean createIndex(Client client, String index, String type, List<Mapping> mappings) throws Exception {
+		if(isExist(client, index)){
+			log.info("创建索引名为："+index+"失败，索引已经存在");
+			return false;
+		}
 		IndicesAdminClient indicesAdminClient = client.admin().indices();
 		CreateIndexResponse response = indicesAdminClient
 											.prepareCreate(index) 
@@ -63,14 +67,12 @@ public class ESIndexClientBasic implements ESIndexClient{
 	@Override
 	public Boolean deleteIndices(Client client, String... indices) {
 		for(String index : indices){
-			IndicesExistsResponse ier = client.admin().indices().prepareExists(index).get();
-			if(ier.isExists()){
+			if(isExist(client, index)){
 				DeleteIndexResponse response = client.admin().indices().prepareDelete(index).get();
 				log.info("删除索引名为： "+index+" ： "+response.isAcknowledged());
-			}else{
-				log.info("索引名为："+index+" 不存在");
+				continue;
 			}
-			
+			log.info("索引名为："+index+" 不存在");
 		}
 		return true;
 	}
@@ -192,6 +194,11 @@ public class ESIndexClientBasic implements ESIndexClient{
 			list.add(model);
 		}
 		return list;
+	}
+	
+	private Boolean isExist(Client client, String index){
+		IndicesExistsResponse ier = client.admin().indices().prepareExists(index).get();
+		return ier.isExists();
 	}
 
 }
