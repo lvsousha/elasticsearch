@@ -1,9 +1,7 @@
 package com.stone.es.operation;
 
-import java.io.File;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.bulk.BackoffPolicy;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -18,29 +16,15 @@ import org.elasticsearch.common.unit.ByteSizeUnit;
 import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.common.unit.TimeValue;
 
-import com.stone.es.ESClient;
 import com.stone.es.model.ESData;
 
 public class ESInsert {
 
 	private Logger log = Logger.getLogger(this.getClass());
 	
-	private BulkProcessor bulkProcessor = null;
+	private static final int INSERT_SIZE = 5000;
 	
-	public static void main(String[] args) throws Exception {
-		// TODO Auto-generated method stub
-		Client client = ESClient.createClientBySetting();
-//		SimpleDateFormat sdf  = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-		ESInsert esi = new ESInsert();
-//		JSONObject object = new JSONObject();
-//		object.put("user", 2);object.put("keyword", "最高人民法院");object.put("createDate", sdf.format(new Date()));
-//		ESData data = new ESData("history", "history", object.toString());
-		for(File file : new File("/JSON").listFiles()){
-			ESData data = new ESData("flfg", "flfg", FileUtils.readFileToString(file,"utf-8"));
-			esi.insertSingle(client, data);
-		}
-
-	}
+	private BulkProcessor bulkProcessor = null;
 	
 	public IndexResponse insertSingle(Client client, ESData data){
 		IndexRequestBuilder build = client.prepareIndex(data.getIndex(),  data.getType());
@@ -52,6 +36,11 @@ public class ESInsert {
 		return response;
 	}
 	
+	/**
+	 * 批量插入，一次执行5000条，全部插入为止
+	 * @param client
+	 * @param datas
+	 */
 	public void insertBulk(Client client, List<ESData> datas){
 		BulkRequestBuilder bulkRequest = client.prepareBulk();
 		int num = 0;
@@ -63,7 +52,7 @@ public class ESInsert {
 			}else{
 				bulkRequest.add(client.prepareIndex(data.getIndex(), data.getType()).setSource(data.getSource()));
 			}
-			if(num < 5000){
+			if(num < INSERT_SIZE){
 				continue;
 			}
 			BulkResponse bulkResponse = bulkRequest.get();
