@@ -16,11 +16,11 @@ public class ESIndexTest {
 	public static void main(String[] args) throws Exception {
 		ESIndexTest esit = new ESIndexTest();
 //		Client client = ESClient.createClientBySetting();
-		Client client = ESClient.createClientShield("elasticsearchXIHU", "admin:000000", "122.112.248.3:9500");
+		Client client = ESClient.createXpackClient();
 		
 		
 		
-		esit.testGetIndexState(client,"history-v2");
+		esit.testGetIndexState(client,"my_index");
 //		esit.testDeleteCreateIndexAndAppendMapping(client);
 		
 		client.close();
