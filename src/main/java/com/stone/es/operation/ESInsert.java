@@ -32,7 +32,7 @@ public class ESInsert {
 			build.setId(data.getId());
 		}
 		IndexResponse  response  =  build.setSource(data.getSource()).get();
-		log.info(response.isCreated());
+		log.info(response.status());
 		return response;
 	}
 	

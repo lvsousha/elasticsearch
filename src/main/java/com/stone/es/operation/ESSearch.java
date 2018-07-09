@@ -3,7 +3,6 @@ package com.stone.es.operation;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -19,7 +18,6 @@ import org.elasticsearch.search.aggregations.bucket.terms.StringTerms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
 import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.search.sort.SortParseElement;
-
 import com.alibaba.fastjson.JSONObject;
 import com.stone.es.ESClient;
 import com.stone.es.http.ESHttp;
@@ -86,7 +84,7 @@ public class ESSearch {
                 .actionGet();
 		log.info("END");
 		SearchHits hits = response.getHits();
-		for(SearchHit hit : hits.hits()){
+		for(SearchHit hit : hits.getHits()){
 			ESData data = new ESData(hit.getIndex(), hit.getType(), hit.getId(), hit.getSourceAsString());
 			datas.add(data);
 			log.info(hit.getSourceAsString());
