@@ -1,4 +1,4 @@
-package com.stone.es.client;
+package com.stone.es.operation;
 
 import java.io.IOException;
 import org.apache.http.Header;
@@ -7,6 +7,7 @@ import org.apache.http.RequestLine;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.client.Response;
 import org.elasticsearch.client.RestClient;
+import com.stone.es.client.ESRestClient;
 
 public class RestClientTest {
 

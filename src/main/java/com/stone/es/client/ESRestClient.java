@@ -17,7 +17,7 @@ public class ESRestClient {
     String userName = "elastic";
     String password = "changeme";
     String ip = "122.112.248.222";
-    Integer port = 16002;
+    Integer port = 16001;
     RestClientBuilder builder = getRestClientSecurity(userName, password, ip, port);
     return getRestClient(builder);
   }
@@ -26,7 +26,7 @@ public class ESRestClient {
     String userName = "elastic";
     String password = "changeme";
     String ip = "122.112.248.222";
-    Integer port = 16002;
+    Integer port = 16001;
     RestClientBuilder builder = getRestClientSecurity(userName, password, ip, port);
     return getHighRestClient(builder);
   }
