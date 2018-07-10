@@ -19,9 +19,8 @@ public class KeywordMapping implements Mapping {
   private Boolean store = false;            //_source
   
 
-  public KeywordMapping(String name, Boolean fields) {
+  public KeywordMapping(String name) {
     this.name = name;
-    this.fields = fields;
   }
 
   @Override

@@ -8,17 +8,18 @@ import org.elasticsearch.action.ActionListener;
 import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteRequest;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
-import org.elasticsearch.client.Request;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.rest.RestStatus;
 import com.stone.es.model.ESData;
+import lombok.Data;
 
 public class DocumentOperation {
 
@@ -128,45 +129,45 @@ public class DocumentOperation {
 
   /**
    * 批量操作
+   * @throws IOException 
    */
-  public void bulk() {}
+  public void bulkIndex(RestHighLevelClient client, List<ESData> datas) throws IOException {
+    BulkRequest request = new BulkRequest();
+    for(ESData data : datas){
+      if(request.numberOfActions() < 5000){
+        request.add(new IndexRequest(data.getIndex(), data.getType(), data.getId()).source(data.getSource(), XContentType.JSON));
+        continue;
+      }
+      BulkResponse bulkResponse = client.bulk(request);
+      if(bulkResponse.hasFailures()){
+        log.info("插入失败");
+        return;
+      }
+      request = new BulkRequest();
+    }
+    if(request.numberOfActions() > 0){
+      BulkResponse bulkResponse = client.bulk(request);
+      if(bulkResponse.hasFailures()){
+        log.info("插入失败");
+        return;
+      }
+    }
+  }
 
   public void multiGet() {}
 
+  
+  @Data
   public static class GetModel {
     private String index;
-    private String type;
+    private String type = "doc";
     private String id;
 
-    GetModel(String index, String type, String id) {
-      this.setIndex(index);
-      this.setType(type);
-      this.setId(id);
-    }
-
-    public String getIndex() {
-      return index;
-    }
-
-    public void setIndex(String index) {
+    GetModel(String index, String id) {
       this.index = index;
-    }
-
-    public String getType() {
-      return type;
-    }
-
-    public void setType(String type) {
-      this.type = type;
-    }
-
-    public String getId() {
-      return id;
-    }
-
-    public void setId(String id) {
       this.id = id;
     }
+
   }
 
 

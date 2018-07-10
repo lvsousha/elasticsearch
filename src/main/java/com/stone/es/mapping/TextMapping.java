@@ -6,11 +6,15 @@ public class TextMapping implements Mapping {
 
   private String type = "text";
   private String name;
-  private Boolean fields;
-  private Boolean fielddata;
+  private Boolean fields = false;
+  private Boolean fielddata = true;
   private Boolean index = true;
   private Boolean store = true;
 
+  public TextMapping(String name) {
+    this.name = name;
+  }
+  
   /**
    * 
    * @param name

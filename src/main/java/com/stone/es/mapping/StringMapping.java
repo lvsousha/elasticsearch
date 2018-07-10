@@ -2,6 +2,7 @@ package com.stone.es.mapping;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
 
+@Deprecated
 public class StringMapping implements Mapping{
 
 	private String type = "string";
