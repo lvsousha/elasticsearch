@@ -7,7 +7,7 @@ public class TextMapping implements Mapping {
   private String type = "text";
   private String name;
   private Boolean fields = false;
-  private Boolean fielddata = true;
+  private Boolean fielddata = false;
   private Boolean index = true;
   private Boolean store = true;
 
@@ -16,7 +16,7 @@ public class TextMapping implements Mapping {
   }
   
   /**
-   * 
+   * 是否需要一个不分词的字段
    * @param name
    * @param fields          内容少用false，内容多用true
    */

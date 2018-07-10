@@ -149,6 +149,7 @@ public class DocumentOperation {
       BulkResponse bulkResponse = client.bulk(request);
       if(bulkResponse.hasFailures()){
         log.info("插入失败");
+        log.info(bulkResponse.buildFailureMessage());
         return;
       }
     }
