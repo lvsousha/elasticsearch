@@ -5,6 +5,7 @@ import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 import org.elasticsearch.client.RestClient;
@@ -13,13 +14,16 @@ import org.elasticsearch.client.RestHighLevelClient;
 
 public class ESRestClient {
 
+  private static Integer maxRetryTimeoutMillis = 60000;
+
   public static RestClient getDefaultRestClientSecurity() {
     String userName = "elastic";
     String password = "changeme";
     String ip = "122.112.248.222";
     Integer port = 16001;
     RestClientBuilder builder = getRestClientSecurity(userName, password, ip, port);
-    return getRestClient(builder);
+    RestClient client = getRestClient(builder);
+    return client;
   }
 
   public static RestHighLevelClient getDefaultHighRestClientSecurity() {
@@ -28,7 +32,8 @@ public class ESRestClient {
     String ip = "122.112.248.222";
     Integer port = 16001;
     RestClientBuilder builder = getRestClientSecurity(userName, password, ip, port);
-    return getHighRestClient(builder);
+    RestHighLevelClient client = getHighRestClient(builder);
+    return client;
   }
 
   public static RestClientBuilder getRestClientSecurity(String userName, String password, String ip,
@@ -43,7 +48,14 @@ public class ESRestClient {
               HttpAsyncClientBuilder httpClientBuilder) {
             return httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider);
           }
+        }).setRequestConfigCallback(new RestClientBuilder.RequestConfigCallback() {
+          @Override
+          public RequestConfig.Builder customizeRequestConfig(
+              RequestConfig.Builder requestConfigBuilder) {
+            return requestConfigBuilder.setConnectTimeout(maxRetryTimeoutMillis).setSocketTimeout(maxRetryTimeoutMillis);
+          }
         });
+    builder.setMaxRetryTimeoutMillis(maxRetryTimeoutMillis);
     return builder;
   }
 

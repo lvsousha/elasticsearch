@@ -1,7 +1,10 @@
 package com.stone.es.mapping;
 
 import org.elasticsearch.common.xcontent.XContentBuilder;
+import com.stone.es.constants.AnalyzersConstants;
+import lombok.Data;
 
+@Data
 public class TextMapping implements Mapping {
 
   private String type = "text";
@@ -10,9 +13,15 @@ public class TextMapping implements Mapping {
   private Boolean fielddata = false;
   private Boolean index = true;
   private Boolean store = true;
+  private String analyzer = AnalyzersConstants.IK_MAX_WORD;
 
   public TextMapping(String name) {
     this.name = name;
+  }
+  
+  public TextMapping(String name, String analyzer) {
+    this.name = name;
+    this.analyzer = analyzer;
   }
   
   /**
@@ -32,50 +41,15 @@ public class TextMapping implements Mapping {
     if (this.fielddata) {
       builder.field("fielddata", this.fielddata);
     } else if (this.fields) {
-      builder.startObject("fields").startObject("raw").field("type", "keyword")
-          .field("store", "true").endObject().endObject();
+      builder.startObject("fields")
+              .startObject("raw")
+                .field("type", "keyword")
+                .field("store", "true")
+              .endObject()
+             .endObject();
     }
+    builder.field("analyzer", this.analyzer);
     builder.endObject();
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public Boolean getFields() {
-    return fields;
-  }
-
-  public void setFields(Boolean fields) {
-    this.fields = fields;
-  }
-
-  public Boolean getIndex() {
-    return index;
-  }
-
-  public void setIndex(Boolean index) {
-    this.index = index;
-  }
-
-  public Boolean getStore() {
-    return store;
-  }
-
-  public void setStore(Boolean store) {
-    this.store = store;
-  }
-
-  public Boolean getFielddata() {
-    return fielddata;
-  }
-
-  public void setFielddata(Boolean fielddata) {
-    this.fielddata = fielddata;
   }
 
 }

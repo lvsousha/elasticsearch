@@ -3,6 +3,16 @@ package com.stone.es.constants;
 public class AnalyzersConstants {
 
   /**
+   * 中文分词器，做最细粒度的划分
+   */
+  public static final String IK_MAX_WORD = "ik_max_word";
+  
+  /**
+   * 中文分词器，做最粗粒度的划分，已被分出的词语将不会再次被其它词语占有
+   */
+  public static final String IK_SMART = "ik_smart";
+  
+  /**
    * 所述standard分析器将文本分为在字边界条件，由Unicode的文本分割算法所定义的。它删除了大多数标点符号，小写术语，并支持删除停用词
    */
   public static final String STANDARD = "standard";

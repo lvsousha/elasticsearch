@@ -17,7 +17,7 @@ public class SearchOperation {
     SearchRequest request = new SearchRequest(); 
     request.indices("laws");
     SearchSourceBuilder sourceBuilder = new SearchSourceBuilder(); 
-    sourceBuilder.query(QueryBuilders.matchPhraseQuery("content", "最高人民法院、最高人民检察院关于办理危害生产安全刑事")); 
+    sourceBuilder.query(QueryBuilders.matchPhraseQuery("content", "最高人民法院、最高人民检察院关于办理危害药品安全刑事案件")); 
     sourceBuilder.from(0);
     sourceBuilder.size(5);
     request.source(sourceBuilder);
