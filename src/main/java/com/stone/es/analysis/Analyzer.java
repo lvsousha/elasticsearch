@@ -1,7 +1,7 @@
 package com.stone.es.analysis;
 
 import java.util.List;
-import com.stone.es.tokenizer.Tokenizer;
+import com.stone.es.analysis.tokenizer.Tokenizer;
 
 public class Analyzer {
 

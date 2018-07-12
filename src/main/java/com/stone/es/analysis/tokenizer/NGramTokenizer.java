@@ -1,21 +1,15 @@
-package com.stone.es.tokenizer;
+package com.stone.es.analysis.tokenizer;
 
-/**
- * 
- * @author zhengchanglin
- *
- */
-public class EdgeNGramTokenizer  implements Tokenizer{
-
-	private String type = "edgeNGram";
+public class NGramTokenizer  implements Tokenizer{
+	private String type = "nGram";
 	private Integer minGram; //default 1
 	private Integer maxGram; //default 2
 	private String[] tokenChars;	//letter,digit,whitespace,punctuantion,symbol——将分割不属于任何这些类的字符
 	
 	private String name;
-	public EdgeNGramTokenizer(){};
+	public NGramTokenizer(){};
 	
-	public EdgeNGramTokenizer(String name){
+	public NGramTokenizer(String name){
 		this.name = name;
 	}
 
@@ -70,5 +64,5 @@ public class EdgeNGramTokenizer  implements Tokenizer{
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }

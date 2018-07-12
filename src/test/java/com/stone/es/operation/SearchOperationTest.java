@@ -3,6 +3,7 @@ package com.stone.es.operation;
 import java.io.IOException;
 import org.elasticsearch.client.RestHighLevelClient;
 import com.stone.es.client.ESRestClient;
+import com.stone.es.client.operation.SearchOperation;
 
 public class SearchOperationTest {
 

@@ -10,8 +10,8 @@ import org.elasticsearch.client.RestHighLevelClient;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.stone.es.client.ESRestClient;
+import com.stone.es.client.operation.DocumentOperation;
 import com.stone.es.model.ESData;
-import com.stone.es.operation.DocumentOperation;
 import com.stone.utils.GlobalCase;
 
 public class DocumentOperationTest {

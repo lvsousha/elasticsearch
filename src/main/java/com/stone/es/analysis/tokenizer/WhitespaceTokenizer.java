@@ -1,19 +1,13 @@
-package com.stone.es.tokenizer;
+package com.stone.es.analysis.tokenizer;
 
-/**
- * 将整个输入作为单个输出发送
- * @author zhengchanglin
- *
- */
-public class KeywordTokenizer  implements Tokenizer{
+public class WhitespaceTokenizer  implements Tokenizer{
 
-	private String type = "keyword ";
-	private Integer bufferSize;	//	default 256
+	private String type = "whitespace";
 	
 	private String name;
-	public KeywordTokenizer(){};
+	public WhitespaceTokenizer(){};
 	
-	public KeywordTokenizer(String name){
+	public WhitespaceTokenizer(String name){
 		this.name = name;
 	}
 
@@ -23,14 +17,6 @@ public class KeywordTokenizer  implements Tokenizer{
 
 	public void setType(String type) {
 		this.type = type;
-	}
-
-	public Integer getBufferSize() {
-		return bufferSize;
-	}
-
-	public void setBufferSize(Integer bufferSize) {
-		this.bufferSize = bufferSize;
 	}
 
 	public String getName() {

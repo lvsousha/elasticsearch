@@ -1,4 +1,4 @@
-package com.stone.es.operation;
+package com.stone.es.client.operation;
 
 import java.util.List;
 import org.elasticsearch.action.admin.indices.alias.Alias;
@@ -64,7 +64,7 @@ public class IndicesOperation {
       this.index = index;
     }
 
-    IndicesModel(String index, String alias) {
+    public IndicesModel(String index, String alias) {
       this.index = index;
       this.alias = alias;
     }

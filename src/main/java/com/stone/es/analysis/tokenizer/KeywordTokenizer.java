@@ -1,18 +1,19 @@
-package com.stone.es.tokenizer;
+package com.stone.es.analysis.tokenizer;
 
 /**
- * 字母的分词器，以非字母分隔文本。 也就是说，它将令牌定义为相邻字母的最大字符串
+ * 将整个输入作为单个输出发送
  * @author zhengchanglin
  *
  */
-public class LetterTokenizer  implements Tokenizer{
-	
-	private String type = "letter";
+public class KeywordTokenizer  implements Tokenizer{
 
-	private String name;
-	public LetterTokenizer(){};
+	private String type = "keyword ";
+	private Integer bufferSize;	//	default 256
 	
-	public LetterTokenizer(String name){
+	private String name;
+	public KeywordTokenizer(){};
+	
+	public KeywordTokenizer(String name){
 		this.name = name;
 	}
 
@@ -22,6 +23,14 @@ public class LetterTokenizer  implements Tokenizer{
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public Integer getBufferSize() {
+		return bufferSize;
+	}
+
+	public void setBufferSize(Integer bufferSize) {
+		this.bufferSize = bufferSize;
 	}
 
 	public String getName() {

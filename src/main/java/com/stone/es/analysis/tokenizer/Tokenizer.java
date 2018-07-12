@@ -1,4 +1,4 @@
-package com.stone.es.tokenizer;
+package com.stone.es.analysis.tokenizer;
 
 public interface Tokenizer {
 

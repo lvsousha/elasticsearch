@@ -1,4 +1,4 @@
-package com.stone.es.tokenizer;
+package com.stone.es.analysis.tokenizer;
 
 /**
  * 工作方式与标准标记器完全相同，但将电子邮件和网址标记为单个标记

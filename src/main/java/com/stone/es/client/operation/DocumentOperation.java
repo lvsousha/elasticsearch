@@ -1,4 +1,4 @@
-package com.stone.es.operation;
+package com.stone.es.client.operation;
 
 import java.io.IOException;
 import java.util.List;
@@ -164,7 +164,7 @@ public class DocumentOperation {
     private String type = "doc";
     private String id;
 
-    GetModel(String index, String id) {
+    public GetModel(String index, String id) {
       this.index = index;
       this.id = id;
     }

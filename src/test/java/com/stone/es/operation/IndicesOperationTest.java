@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.elasticsearch.client.RestHighLevelClient;
 import com.stone.es.client.ESRestClient;
+import com.stone.es.client.operation.IndicesOperation;
 import com.stone.es.constants.AnalyzersConstants;
 import com.stone.es.mapping.DateMapping;
 import com.stone.es.mapping.KeywordMapping;

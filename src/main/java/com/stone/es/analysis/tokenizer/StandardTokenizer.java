@@ -1,4 +1,4 @@
-package com.stone.es.tokenizer;
+package com.stone.es.analysis.tokenizer;
 
 /**
  * 标准类型的标记器，提供基于语法的标记器，对于大多数欧洲语言文档来说，它是一个很好的标记器

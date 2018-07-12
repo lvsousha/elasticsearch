@@ -1,4 +1,4 @@
-package com.stone.es.tokenizer;
+package com.stone.es.analysis.tokenizer;
 
 /**
  *一个小写字母的标记器，一起执行Letter Tokenizer和小写标记过滤器的功能。 

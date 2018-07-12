@@ -1,4 +1,4 @@
-package com.stone.es.tokenizer;
+package com.stone.es.analysis.tokenizer;
 
 /**
  * 经典类型的分词器提供基于语法的分词器，是英语语言文档的一个很好的分词器。 
