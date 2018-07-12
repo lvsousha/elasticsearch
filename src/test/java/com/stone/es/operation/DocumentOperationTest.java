@@ -50,7 +50,7 @@ public class DocumentOperationTest {
     DocumentOperation documentOperation = new DocumentOperation();
     RestHighLevelClient client = ESRestClient.getDefaultHighRestClientSecurity();
     documentOperation.get(client,
-        new DocumentOperation.GetModel("stone", "466186875137163264"));
+        new DocumentOperation.DocumentModel("stone", "466186875137163264"));
     client.close();
   }
 

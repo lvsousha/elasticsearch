@@ -21,6 +21,17 @@ import org.elasticsearch.rest.RestStatus;
 import com.stone.es.model.ESData;
 import lombok.Data;
 
+
+/**
+ * 索引数据
+ * 根据 index,type,id 获取文档
+ * 根据 index,type,id 判断文档是否存在
+ * 根据 index,type,id 删除文档
+ * 批量操作
+ *  
+ * @author zhengchanglin
+ *
+ */
 public class DocumentOperation {
 
   private Logger log = Logger.getRootLogger();
@@ -85,7 +96,7 @@ public class DocumentOperation {
    * @param model
    * @throws IOException
    */
-  public void get(RestHighLevelClient client, GetModel model) throws IOException {
+  public void get(RestHighLevelClient client, DocumentModel model) throws IOException {
     GetRequest request = new GetRequest(model.getIndex(), model.getType(), model.getId());
     GetResponse response = client.get(request);
     if (response.isExists()) {
@@ -103,7 +114,7 @@ public class DocumentOperation {
    * @param model
    * @throws IOException
    */
-  public Boolean exists(RestHighLevelClient client, GetModel model) throws IOException {
+  public Boolean exists(RestHighLevelClient client, DocumentModel model) throws IOException {
     GetRequest request = new GetRequest(model.getIndex(), model.getType(), model.getId());
     return client.exists(request);
   }
@@ -115,7 +126,7 @@ public class DocumentOperation {
    * @param model
    * @throws IOException
    */
-  public Boolean delete(RestHighLevelClient client, GetModel model) throws IOException {
+  public Boolean delete(RestHighLevelClient client, DocumentModel model) throws IOException {
     DeleteRequest request = new DeleteRequest(model.getIndex(), model.getType(), model.getId());
     DeleteResponse response = client.delete(request);
     if (response.getResult() == DocWriteResponse.Result.NOT_FOUND) {
@@ -159,14 +170,19 @@ public class DocumentOperation {
 
   
   @Data
-  public static class GetModel {
+  public static class DocumentModel {
     private String index;
     private String type = "doc";
     private String id;
 
-    public GetModel(String index, String id) {
+    public DocumentModel(String index, String id) {
       this.index = index;
       this.id = id;
+    }
+
+    @Deprecated
+    public void setType(String type) {
+      this.type = type;
     }
 
   }
