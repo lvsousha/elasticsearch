@@ -18,7 +18,7 @@ public class IndicesApis {
    */
   public static void getIndicesMappings(RestClient client) throws IOException{
     Map<String,String> params = new HashMap<>();
-    Response response = client.performRequest("GET", "/_mapping", params);
+    Response response = client.performRequest("GET", "/_mapping?pretty", params);
     System.out.println(EntityUtils.toString(response.getEntity()));
   }
   
@@ -42,7 +42,7 @@ public class IndicesApis {
    */
   public static void getIndicesSettings(RestClient client) throws IOException{
     Map<String,String> params = new HashMap<>();
-    Response response = client.performRequest("GET", "/_all/_settings", params);
+    Response response = client.performRequest("GET", "/_all/_settings?pretty", params);
     System.out.println(EntityUtils.toString(response.getEntity()));
   }
 

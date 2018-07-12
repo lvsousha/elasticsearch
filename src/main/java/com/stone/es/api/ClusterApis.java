@@ -17,7 +17,7 @@ public class ClusterApis {
   public static void getClusterHealth(RestClient client) throws IOException{
     Map<String,String> params = new HashMap<>();
     params.put("timeout", "50s");
-    Response response = client.performRequest("GET", "/_cluster/health?", params);
+    Response response = client.performRequest("GET", "/_cluster/health?pretty", params);
     System.out.println(EntityUtils.toString(response.getEntity()));
   }
   
