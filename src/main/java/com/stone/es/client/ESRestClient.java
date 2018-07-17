@@ -29,8 +29,8 @@ public class ESRestClient {
   public static RestHighLevelClient getDefaultHighRestClientSecurity() {
     String userName = "elastic";
     String password = "changeme";
-    String ip = "122.112.248.222";
-    Integer port = 16001;
+    String ip = "134.175.56.35";
+    Integer port = 15000;
     RestClientBuilder builder = getRestClientSecurity(userName, password, ip, port);
     RestHighLevelClient client = getHighRestClient(builder);
     return client;
